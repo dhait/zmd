@@ -2,14 +2,11 @@ package org.optionmetrics.zmd.core;
 
 import org.commonmark.node.FencedCodeBlock;
 import org.commonmark.node.Node;
-import org.commonmark.renderer.NodeRenderer;
 import org.commonmark.renderer.html.CoreHtmlNodeRenderer;
 import org.commonmark.renderer.html.HtmlNodeRendererContext;
 import org.commonmark.renderer.html.HtmlWriter;
 
-import javax.swing.text.html.HTMLWriter;
 import java.util.Set;
-import java.util.Collections;
 
 import static java.util.Collections.singleton;
 
