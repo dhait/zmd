@@ -1,5 +1,6 @@
 package org.optionmetrics.zmd.core;
 
+import org.antlr.v4.runtime.*;
 import org.commonmark.node.AbstractVisitor;
 import org.commonmark.node.FencedCodeBlock;
 import org.commonmark.node.Node;
@@ -168,8 +169,16 @@ public class ZTranslator implements PostProcessor {
         public void visit(FencedCodeBlock codeBlock) {
             ZInfo info = new ZInfo(codeBlock.getInfo());
             if (info.isZ()) {
+                // first apply the markup translation
                 String zstring = translate(codeBlock.getLiteral());
                 codeBlock.setLiteral(zstring);
+                // now parse
+                CharStream stream = CharStreams.fromString(zstring);
+                ZLexer lexer = new ZLexer(stream);
+                CommonTokenStream tokens = new CommonTokenStream(lexer);
+                ZParser parser = new ZParser(tokens);
+                ParserRuleContext tree = parser.specification();
+                codeBlock.appendChild(new ZTreeNode(tree));
             } else {
                 super.visit(codeBlock);
             }

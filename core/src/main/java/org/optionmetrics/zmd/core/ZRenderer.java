@@ -1,5 +1,6 @@
 package org.optionmetrics.zmd.core;
 
+import org.commonmark.node.CustomNode;
 import org.commonmark.node.FencedCodeBlock;
 import org.commonmark.node.Node;
 import org.commonmark.renderer.html.CoreHtmlNodeRenderer;
