@@ -13,9 +13,9 @@ import java.util.Collections;
 
 import static java.util.Collections.singleton;
 
-public class ZCodeBlockRenderer extends CoreHtmlNodeRenderer {
+public class ZRenderer extends CoreHtmlNodeRenderer {
 
-    public ZCodeBlockRenderer(HtmlNodeRendererContext context) {
+    public ZRenderer(HtmlNodeRendererContext context) {
         super(context);
     }
 
@@ -27,15 +27,12 @@ public class ZCodeBlockRenderer extends CoreHtmlNodeRenderer {
     @Override
     public void render(Node node) {
         FencedCodeBlock fencedCodeBlock = (FencedCodeBlock) node;
-        String language = fencedCodeBlock.getInfo();
-        if (language != null) {
-            language = language.substring(0, language.indexOf(' '));
-        }
-        if (language.toUpperCase().equals("Z") || language.toUpperCase().equals("ZED")) {
+        ZInfo info = new ZInfo(fencedCodeBlock.getInfo());
+        if (info.isZ()) {
             HtmlWriter html = context.getWriter();
             html.line();
             html.tag("p");
-            html.text(fencedCodeBlock.getLiteral());
+            html.raw(fencedCodeBlock.getLiteral());
             html.tag("/p");
             html.line();
         }

@@ -7,13 +7,9 @@ This is a test of the markdown processor.
 Here is some code:
 
 ```Z eval=false
-class Abc {
-   int j = 0;
-   int k;
-   
-   Abc(int k1) {
-      k = k1;
-   }
-}
-
+\begin{schema}{Abc}
+x : \nat
+\where
+x > 3
+\end{schema}
 ```
