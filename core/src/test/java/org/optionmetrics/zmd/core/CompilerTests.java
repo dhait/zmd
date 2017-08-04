@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 
-public class ProcessorTests {
+public class CompilerTests {
 
     @Test
     public void basicTest() throws IOException {
@@ -15,7 +15,7 @@ public class ProcessorTests {
         Reader reader = new BufferedReader(new InputStreamReader(
                 this.getClass().getResourceAsStream("/" + "simpleText.md")));
 
-        Processor processor = new Processor();
+        Compiler processor = new Compiler();
         processor.process(reader);
 
     }

@@ -1,0 +1,26 @@
+grammar ZPP;
+
+file : directive*  EOF;
+
+directive  : definition
+           | include
+           | ignore
+           ;
+
+definition : DEFINE CHUNK CHUNK EOL
+           ;
+
+include    : INCLUDE STRING EOL
+           ;
+
+ignore     : CHUNK* EOL
+           ;
+
+DEFINE : '#define';
+INCLUDE : '#include' ;
+
+STRING : '"' ~[ \t\n\r"]*? '"' ;
+CHUNK : ~[ \t\n\r]+ ;
+EOL : '\r'? '\n';
+WS : [ \t] -> skip;
+

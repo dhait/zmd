@@ -1,0 +1,6 @@
+section testme parents standard_toolkit end
+
+zed
+  forall x : X @ x > 3
+end
+

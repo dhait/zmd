@@ -1,0 +1,41 @@
+// Definitions of unicode characters for base Z
+//
+// Greek characters
+//
+#define Delta \u0394
+#define Xi \u039e
+#define theta \u03b8
+#define lambda \u03bc
+//
+// Core letter characters
+//
+#define arithmos \ud835\udd38
+#define nat \u2115
+#define power \u2119
+//
+// Brackets
+//
+#define <| \u2989
+#define |> \u298a
+#define << \u300a
+#define >> \u300b
+//
+//  Other symbols
+//
+#define vdash \u22a2
+#define land \u2227
+#define lor \u2228
+#define implies \u21d2
+#define iff \u21d4
+#define lnot \u00ac
+#define forall \u2200
+#define exists \u2203
+#define cross \u00d7
+#define in \u2203
+#define spot \u2981
+#define @ \u2981
+#define project \u2a21
+#define semi \u2a1f
+#define pipe \u2a20
+
+
