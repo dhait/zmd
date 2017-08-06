@@ -25,6 +25,11 @@ public class SectionListener extends SectionParserBaseListener {
     }
 
     @Override
+    public void exitDefinition(SectionParser.DefinitionContext ctx) {
+        System.out.println("Define " + ctx.getText());
+    }
+
+    @Override
     public void exitZedParagraph(SectionParser.ZedParagraphContext ctx) {
         Paragraph p = new Formal(ctx.getText());
         paragraphs.add(p);

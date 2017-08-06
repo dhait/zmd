@@ -10,6 +10,7 @@ paragraph
     | axParagraph
     | schemaParagraph
     | sectionHeader
+    | definition
     | informal
     ;
 
@@ -39,3 +40,6 @@ formals
    	: NAME (COMMA NAME)*
    	;
 
+definition
+    : DEF CHUNK CHUNK ENDD
+    ;

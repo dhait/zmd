@@ -1,7 +1,7 @@
 section sequence_toolkit end
 
-#define langle \u3008
-#define rangle \u3009
-#define cat \u2040
-#define extract \u21bf
-#define filter \u21be
+define langle \u3008
+define rangle \u3009
+define cat \u2040
+define extract \u21bf
+define filter \u21be

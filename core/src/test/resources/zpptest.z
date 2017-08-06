@@ -1,5 +1,7 @@
 section testme parents standard_toolkit end
 
+define a1 def
+
 zed
   forall x : X @ x > 3
 end

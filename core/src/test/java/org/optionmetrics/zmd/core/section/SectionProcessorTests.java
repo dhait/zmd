@@ -52,6 +52,7 @@ public class SectionProcessorTests {
     public void parseTest() {
         String input = "section testme end\n" +
                 "\n" +
+                "define x abc\n" +
                 "zed\n" +
                 "  forall x : X @ x > 3\n" +
                 "end\n";
