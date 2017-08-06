@@ -32,7 +32,7 @@ public class SectionProcessorTests {
     }
 
     @Test
-    public void basicTest() throws URISyntaxException, IOException {
+    public void basicTest() throws Exception {
 
         copyFile("prelude.z");
         copyFile("sequence_toolkit.z");
@@ -43,10 +43,7 @@ public class SectionProcessorTests {
         Path toolKitDir = Paths.get(tempFolder.getRoot().getPath());
         SectionProcessor sectionProcessor = new SectionProcessor(toolKitDir);
 
-        Set<String> names = new HashSet<>();
-        names.add("zpptest");
-        names.add("prelude");
-        Set<Section> sections = sectionProcessor.readSpec(names, null);
+        List<Section> sections = sectionProcessor.sortSections("zpptest");
         for (Section s : sections)
             System.out.println(s);
     }

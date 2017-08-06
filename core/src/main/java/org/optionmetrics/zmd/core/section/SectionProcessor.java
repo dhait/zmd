@@ -2,17 +2,11 @@ package org.optionmetrics.zmd.core.section;
 
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
-import org.antlr.v4.runtime.tree.TerminalNode;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
 
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.nio.file.*;
 import java.util.*;
 import java.util.stream.Collectors;
-
-import static org.optionmetrics.zmd.core.section.SectionLexer.section;
 
 public class SectionProcessor {
 
@@ -42,15 +36,10 @@ public class SectionProcessor {
         return listener.paragraphs;
     }
 
-    public String sectionToName(Section s) {
-        return ((SectionHeader)s.getParagraphs().get(0)).getSectionName();
-    }
-
     public Set<String> sectionsToParents(Collection<Section> sections) {
         Set<String> parents = new HashSet<>();
         for (Section s : sections) {
-            SectionHeader header = (SectionHeader) s.getParagraphs().get(0);
-            parents.addAll(header.getParents());
+            parents.addAll(s.getParents());
         }
         return parents;
     }
@@ -143,15 +132,6 @@ public class SectionProcessor {
         if (names.isEmpty())
             return ss;
 
-        /*
-
-        else
-            ss2  = union of all filenameTosections for the names
-            size of ss2 == size of (sectionToName(ss2))
-            return readSpec( sectionsToParents(ss2) minus sectionToName(sections)
-            minus names,
-               sections union ss2
-         */
         Set<Section> ss2 = new HashSet<>();
         for (String n : names) {
             Set<Section> f2s = new HashSet<>(filenameToSections(n));
@@ -159,8 +139,8 @@ public class SectionProcessor {
         }
 
         //prepare first param
-        List<String> snames = ss.stream().map(s->sectionToName(s)).collect(Collectors.toList());
         Set<String> firstParam = sectionsToParents(ss2);
+        List<String> snames = ss.stream().map(s->s.toName()).collect(Collectors.toList());
         firstParam.removeAll(snames);
         firstParam.removeAll(names);
 
@@ -170,47 +150,52 @@ public class SectionProcessor {
         return readSpec(firstParam, ss2);
     }
 
+    public List<Section> orderSections(Set<Section> sections) throws Exception {
 
+        List<Section>  sorted = new ArrayList<>();
 
-
-    public class SectionListener extends SectionParserBaseListener {
-
-        public List<Paragraph> paragraphs = new ArrayList<>();
-        public List<String> formals = new ArrayList<>();
-
-        @Override
-        public void exitFormals(SectionParser.FormalsContext ctx) {
-            formals.clear();
-            for (TerminalNode t : ctx.NAME()) {
-                formals.add(t.getText());
+        boolean done = false;
+        while (!done) {
+            Optional<Section> n = sections.stream().filter(Section::isUnmarked).findFirst();
+            if (n.isPresent()) {
+                visit(n.get(), sections, sorted);
+            } else {
+                done = true;
             }
         }
-
-        @Override
-        public void exitInformal(SectionParser.InformalContext ctx) {
-            Paragraph p = new Informal(ctx.getText());
-            paragraphs.add(p);
+        Optional<Section> prelude = sorted.stream().filter(s->s.toName().equals("prelude"))
+                .findFirst();
+        if (prelude.isPresent()) {
+            sorted.remove(prelude.get());
+            sorted.add(0, prelude.get());
         }
-
-        @Override
-        public void exitZedParagraph(SectionParser.ZedParagraphContext ctx) {
-            Paragraph p = new Formal(ctx.getText());
-            paragraphs.add(p);
-        }
-
-        @Override
-        public void exitSchemaParagraph(SectionParser.SchemaParagraphContext ctx) {
-            Paragraph p = new Formal(ctx.getText());
-            paragraphs.add(p);
-        }
-
-        @Override
-        public void exitSectionHeader(SectionParser.SectionHeaderContext ctx) {
-            SectionHeader s = new SectionHeader();
-            s.setSectionName(ctx.NAME().getText());
-            s.getParents().addAll(formals);
-            paragraphs.add(s);
-        }
-
+        return sorted;
     }
+
+    private void visit(Section n, Set<Section> sections, List<Section> sorted) throws Exception {
+        if (n.isPermMark())
+            return;
+        if (n.isTempMark()) {
+            throw new Exception("Cycle present");
+        }
+        n.setTempMark(true);
+        List<String> parents = n.getParents();
+        for (String p : parents) {
+            Optional<Section> ps = sections.stream()
+                    .filter(s->s.toName().equals(p)).findFirst();
+            if (ps.isPresent())
+                visit(ps.get(), sections, sorted);
+        }
+        n.setPermMark(true);
+        sorted.add(n);
+    }
+
+    public List<Section> sortSections(String name) throws Exception {
+        Set<String> names = new HashSet<>();
+        names.add(name);
+        names.add("prelude");
+        Set<Section> sections = readSpec(names, null);
+        return orderSections(sections);
+    }
+
 }

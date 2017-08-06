@@ -9,4 +9,18 @@ import java.util.List;
 public class Section {
     private List<Paragraph> paragraphs = new ArrayList<>();
 
+    private boolean tempMark = false;
+    private boolean permMark = false;
+
+    public boolean isUnmarked() {
+        return  !tempMark && !permMark;
+    }
+
+    public String toName() {
+        return ((SectionHeader) paragraphs.get(0)).getSectionName();
+    }
+
+    public List<String> getParents() {
+        return ((SectionHeader) paragraphs.get(0)).getParents();
+    }
 }
