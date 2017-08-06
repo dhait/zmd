@@ -43,7 +43,7 @@ public class SectionProcessorTests {
         Path toolKitDir = Paths.get(tempFolder.getRoot().getPath());
         SectionProcessor sectionProcessor = new SectionProcessor(toolKitDir);
 
-        List<Section> sections = sectionProcessor.sortSections("zpptest");
+        List<Section> sections = sectionProcessor.process("zpptest");
         for (Section s : sections)
             System.out.println(s);
     }

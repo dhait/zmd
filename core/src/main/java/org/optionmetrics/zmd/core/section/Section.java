@@ -4,6 +4,7 @@ import lombok.Data;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Data
 public class Section {
@@ -22,5 +23,13 @@ public class Section {
 
     public List<String> getParents() {
         return ((SectionHeader) paragraphs.get(0)).getParents();
+    }
+
+    public void expandDefinitions(Map<String, String> defines) {
+        for (Paragraph p : paragraphs) {
+            if (p instanceof Formal) {
+                // make the substitutions
+            }
+        }
     }
 }

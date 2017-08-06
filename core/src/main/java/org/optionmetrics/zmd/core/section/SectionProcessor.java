@@ -19,6 +19,12 @@ public class SectionProcessor {
         this.toolkitDir = toolkitDir;
     }
 
+    public List<Section> process(String name) throws Exception {
+        List<Section> sections = sortSections(name);
+        //expandDefinitions(sections);
+        return sections;
+    }
+
     public void addToSectionPath(Path path) {
         sectionPath.add(path);
     }
@@ -33,17 +39,21 @@ public class SectionProcessor {
         ParseTreeWalker walker = new ParseTreeWalker();
         SectionListener listener  = new SectionListener();
         walker.walk(listener, tree);
+        // check errors
+        for (String k : listener.defines.keySet()) {
+            System.out.println(k + ":" + listener.defines.get(k));
+        }
         return listener.paragraphs;
     }
 
-    public Set<String> sectionsToParents(Collection<Section> sections) {
+    private Set<String> sectionsToParents(Collection<Section> sections) {
         Set<String> parents = new HashSet<>();
         for (Section s : sections) {
             parents.addAll(s.getParents());
         }
         return parents;
     }
-    public List<Paragraph> filenameToParagraphs(List<Path> directories, String name) throws IOException {
+    private List<Paragraph> filenameToParagraphs(List<Path> directories, String name) throws IOException {
         List<Paragraph> paragraphs;
         String fname = name + ".z";
         Path target = null;
@@ -63,7 +73,7 @@ public class SectionProcessor {
     }
 
 
-    public List<Paragraph> filenameToParagraphs(String name) throws IOException {
+    private List<Paragraph> filenameToParagraphs(String name) throws IOException {
         List<Path> directories = new ArrayList<>();
         directories.add(toolkitDir);
         directories.addAll(sectionPath);
@@ -72,7 +82,7 @@ public class SectionProcessor {
     }
 
 
-    public List<Paragraph> addHeader(String name) throws IOException {
+    private List<Paragraph> addHeader(String name) throws IOException {
         List<Paragraph> ps = filenameToParagraphs(name);
 
         // split this list of paragraphs into two parts
@@ -83,7 +93,6 @@ public class SectionProcessor {
             suff.remove(0);
         }
 
-        //String tname = FilenameUtils.removeExtension(name);
         String tname = name;
 
         if (pref.isEmpty()) {
@@ -125,7 +134,7 @@ public class SectionProcessor {
     }
 
 
-    public Set<Section> readSpec(Set<String> names, Set<Section> sections) throws IOException {
+    private Set<Section> readSpec(Set<String> names, Set<Section> sections) throws IOException {
         Set<Section> ss = new HashSet<>();
         if (sections != null)
             ss.addAll(sections);
@@ -150,7 +159,7 @@ public class SectionProcessor {
         return readSpec(firstParam, ss2);
     }
 
-    public List<Section> orderSections(Set<Section> sections) throws Exception {
+    private List<Section> orderSections(Set<Section> sections) throws Exception {
 
         List<Section>  sorted = new ArrayList<>();
 
@@ -190,7 +199,7 @@ public class SectionProcessor {
         sorted.add(n);
     }
 
-    public List<Section> sortSections(String name) throws Exception {
+    private List<Section> sortSections(String name) throws Exception {
         Set<String> names = new HashSet<>();
         names.add(name);
         names.add("prelude");
@@ -198,4 +207,10 @@ public class SectionProcessor {
         return orderSections(sections);
     }
 
+    private void expandDefinitions(Map<String, String> definitions,
+                                   List<Section> sections ) {
+        for (Section s : sections) {
+            s.expandDefinitions(definitions);
+        }
+    }
 }
