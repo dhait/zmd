@@ -30,7 +30,7 @@ define lnot \u00ac
 define forall \u2200
 define exists \u2203
 define cross \u00d7
-define in \u2203
+define in \u2208
 define spot \u2981
 define @ \u2981
 define project \u2a21

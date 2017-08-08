@@ -1,24 +1,21 @@
-package org.optionmetrics.zmd.core.section;
+package org.optionmetrics.zmd.core.translate;
 
-import com.sun.tools.doclint.Env;
-import org.antlr.v4.runtime.*;
+import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.CharStreams;
+import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.ParserRuleContext;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-import org.optionmetrics.zmd.core.translate.Environment;
 import org.optionmetrics.zmd.core.translate.impl.Formal;
-import org.optionmetrics.zmd.core.translate.Paragraph;
-import org.optionmetrics.zmd.core.translate.Section;
-import org.optionmetrics.zmd.core.translate.SectionProcessor;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
 
-public class SectionProcessorTests {
+public class TranslatorTests {
 
     @Rule
     public final TemporaryFolder tempFolder = new TemporaryFolder();
@@ -48,17 +45,16 @@ public class SectionProcessorTests {
 
         sectionProcessor.process("zpptest");
         for (Section s : sectionProcessor.getSections()) {
-            System.out.println("Name: " + s.getName());
+            //System.out.println("Name: " + s.getName());
             for (Paragraph p : s.getParagraphs()) {
                 if (p instanceof Formal) {
                     System.out.println( ((Formal) p).getExpanded());
                 }
             }
-            System.out.println("------");
+            //System.out.println("------");
         }
 
     }
-
     @Test
     public void parseTest() {
         String input = "section testme end\n" +
@@ -69,14 +65,13 @@ public class SectionProcessorTests {
                 "end\n";
 
         CharStream stream = CharStreams.fromString(input);
-        SectionLexer lexer = new SectionLexer(stream);
+        TranslateLexer lexer = new TranslateLexer(stream);
         CommonTokenStream tokens = new CommonTokenStream(lexer);
-        for (Token t : lexer.getAllTokens()) {
-            System.out.println(t);
-        }
+        //for (Token t : lexer.getAllTokens()) {
+        //    System.out.println(t);
+        //}
 
-        //SectionParser parser = new SectionParser(tokens);
-        //ParserRuleContext tree = parser.specification();
-
+        TranslateParser parser = new TranslateParser(tokens);
+        ParserRuleContext tree = parser.specification();
     }
 }

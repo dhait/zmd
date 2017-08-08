@@ -5,8 +5,6 @@ import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
-import org.optionmetrics.zmd.core.section.SectionLexer;
-import org.optionmetrics.zmd.core.section.SectionParser;
 import org.optionmetrics.zmd.core.translate.impl.Formal;
 import org.optionmetrics.zmd.core.translate.impl.SectionHeader;
 
@@ -38,9 +36,9 @@ public class SectionProcessor {
     private List<Paragraph> load(Path source) throws IOException {
 
         CharStream stream = CharStreams.fromPath(source);
-        SectionLexer lexer = new SectionLexer(stream);
+        TranslateLexer lexer = new TranslateLexer(stream);
         CommonTokenStream tokens = new CommonTokenStream(lexer);
-        SectionParser parser = new SectionParser(tokens);
+        TranslateParser parser = new TranslateParser(tokens);
         ParserRuleContext tree = parser.specification();
         ParseTreeWalker walker = new ParseTreeWalker();
         SectionListener listener  = new SectionListener();
