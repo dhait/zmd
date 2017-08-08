@@ -6,3 +6,14 @@ zed
   forall x : X @ x > 3
 end
 
+zed
+  A cup B subset C
+end
+
+schema Abc[X]
+  def : GHI
+  jkl : MNO
+where
+   pqr in STU
+end
+

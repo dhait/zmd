@@ -1,32 +1,38 @@
-package org.optionmetrics.zmd.core.section;
+package org.optionmetrics.zmd.core.translate;
 
-import org.antlr.v4.runtime.*;
+import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.CharStreams;
+import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
+import org.optionmetrics.zmd.core.section.SectionLexer;
+import org.optionmetrics.zmd.core.section.SectionParser;
+import org.optionmetrics.zmd.core.translate.impl.Formal;
+import org.optionmetrics.zmd.core.translate.impl.SectionHeader;
 
 import java.io.IOException;
-import java.nio.file.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class SectionProcessor {
 
-    private Path currentDir;
-    private Path toolkitDir;
-    private List<Path> sectionPath = new ArrayList<>();
+    private Environment environment;
+    private List<Section> sections;
 
-    SectionProcessor(Path toolkitDir) {
-        this.currentDir = Paths.get(".").toAbsolutePath().normalize();
-        this.toolkitDir = toolkitDir;
+    public SectionProcessor(Environment environment) {
+        this.environment = environment;
     }
 
-    public List<Section> process(String name) throws Exception {
-        List<Section> sections = sortSections(name);
-        //expandDefinitions(sections);
+    public List<Section> getSections() {
         return sections;
     }
 
-    public void addToSectionPath(Path path) {
-        sectionPath.add(path);
+    public void process(String name) throws Exception {
+        sortSections(name);
+        expandDefinitions();
+        convertToZed();
     }
 
     private List<Paragraph> load(Path source) throws IOException {
@@ -39,10 +45,6 @@ public class SectionProcessor {
         ParseTreeWalker walker = new ParseTreeWalker();
         SectionListener listener  = new SectionListener();
         walker.walk(listener, tree);
-        // check errors
-        for (String k : listener.defines.keySet()) {
-            System.out.println(k + ":" + listener.defines.get(k));
-        }
         return listener.paragraphs;
     }
 
@@ -75,9 +77,9 @@ public class SectionProcessor {
 
     private List<Paragraph> filenameToParagraphs(String name) throws IOException {
         List<Path> directories = new ArrayList<>();
-        directories.add(toolkitDir);
-        directories.addAll(sectionPath);
-        directories.add(currentDir);
+        directories.add(environment.getToolkitDir());
+        directories.addAll(environment.getSectionPath());
+        directories.add(environment.getCurrentDir());
         return filenameToParagraphs(directories, name);
     }
 
@@ -93,29 +95,27 @@ public class SectionProcessor {
             suff.remove(0);
         }
 
-        String tname = name;
-
         if (pref.isEmpty()) {
-            if (!suff.isEmpty() && !((SectionHeader) suff.get(0)).getSectionName().equals(tname)) {
+            if (!suff.isEmpty() && !((SectionHeader) suff.get(0)).getSectionName().equals(name)) {
                 SectionHeader h = new SectionHeader();
-                h.setSectionName(tname);
+                h.setSectionName(name);
                 ps.add(0, h);
             }
         } else if (pref.stream().noneMatch(p->(p instanceof Formal))) { // pref contains no formals)
             SectionHeader h = new SectionHeader();
-            h.setSectionName(tname);
+            h.setSectionName(name);
             h.getParents().add("standard_toolkit");
             ps.add(0, h);
         } else {
             SectionHeader h = new SectionHeader();
-            h.setSectionName(tname + "informal");
+            h.setSectionName(name + "informal");
             ps.add(0, h);
         }
         return ps;
     }
 
-    public List<Section> filenameToSections(String name) throws IOException {
-        List<Section> sections = new ArrayList<Section>();
+    private List<Section> filenameToSections(String name) throws IOException {
+        List<Section> sections = new ArrayList<>();
         List<Paragraph> ps = addHeader(name);
         if (ps.size() == 0)
             return sections;
@@ -126,6 +126,7 @@ public class SectionProcessor {
                     sections.add(s);
                 s = new Section();
             }
+            assert s != null;
             s.getParagraphs().add(p);
         }
         if (s.getParagraphs().size() > 0)
@@ -149,7 +150,7 @@ public class SectionProcessor {
 
         //prepare first param
         Set<String> firstParam = sectionsToParents(ss2);
-        List<String> snames = ss.stream().map(s->s.toName()).collect(Collectors.toList());
+        List<String> snames = ss.stream().map(Section::getName).collect(Collectors.toList());
         firstParam.removeAll(snames);
         firstParam.removeAll(names);
 
@@ -165,14 +166,14 @@ public class SectionProcessor {
 
         boolean done = false;
         while (!done) {
-            Optional<Section> n = sections.stream().filter(Section::isUnmarked).findFirst();
+            Optional<Section> n = sections.stream().filter(s->s.mark==Section.Mark.NONE).findFirst();
             if (n.isPresent()) {
-                visit(n.get(), sections, sorted);
+                n.get().visit(sections, sorted);
             } else {
                 done = true;
             }
         }
-        Optional<Section> prelude = sorted.stream().filter(s->s.toName().equals("prelude"))
+        Optional<Section> prelude = sorted.stream().filter(s->s.getName().equals("prelude"))
                 .findFirst();
         if (prelude.isPresent()) {
             sorted.remove(prelude.get());
@@ -181,36 +182,40 @@ public class SectionProcessor {
         return sorted;
     }
 
-    private void visit(Section n, Set<Section> sections, List<Section> sorted) throws Exception {
-        if (n.isPermMark())
-            return;
-        if (n.isTempMark()) {
-            throw new Exception("Cycle present");
-        }
-        n.setTempMark(true);
-        List<String> parents = n.getParents();
-        for (String p : parents) {
-            Optional<Section> ps = sections.stream()
-                    .filter(s->s.toName().equals(p)).findFirst();
-            if (ps.isPresent())
-                visit(ps.get(), sections, sorted);
-        }
-        n.setPermMark(true);
-        sorted.add(n);
-    }
-
-    private List<Section> sortSections(String name) throws Exception {
+    private void sortSections(String name) throws Exception {
         Set<String> names = new HashSet<>();
         names.add(name);
         names.add("prelude");
-        Set<Section> sections = readSpec(names, null);
-        return orderSections(sections);
+        Set<Section> sectionSet = readSpec(names, null);
+        sections = orderSections(sectionSet);
     }
 
-    private void expandDefinitions(Map<String, String> definitions,
-                                   List<Section> sections ) {
+    private void expandDefinitions() {
+        Map<String, Map<String, String> > defsBySection = new HashMap<>();
+        Map<String, Map<String, String> > cumDefs = new HashMap<>();
+        // first collect definitions
         for (Section s : sections) {
-            s.expandDefinitions(definitions);
+            s.collectDefinitions();
+            defsBySection.put(s.getName(), s.getDefinitions());
+            cumDefs.put(s.getName(), s.getDefinitions());
+        }
+        // now cascade down
+        for (Section s : sections) {
+            Map<String, String> cumDef = cumDefs.get(s.getName());
+            cumDef.putAll(defsBySection.get("prelude"));
+            for (String p : s.getParents()) {
+                if (cumDefs.containsKey(p))
+                    cumDef.putAll(cumDefs.get(p));
+            }
+            cumDefs.put(s.getName(), cumDef);
+
+            s.expandDefinitions(cumDef);
+        }
+    }
+
+    private void convertToZed() {
+        for (Section s : sections) {
+            s.convertToZed();
         }
     }
 }

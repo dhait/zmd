@@ -23,11 +23,11 @@ zedParagraph
     ;
 
 axParagraph
-	: AX  ZCHAR* ENDZ
+	: AX  (LBRACKET  genformals RBRACKET)? ZCHAR* ENDZ
 	;
 
 schemaParagraph
-	: SCH ZCHAR* ENDZ
+	: SCH (LBRACKET  genformals RBRACKET)? ZCHAR* ENDZ
 	;
 
 sectionHeader
@@ -39,6 +39,10 @@ sectionHeader
 formals
    	: NAME (COMMA NAME)*
    	;
+
+genformals
+    : FORMAL (FCOMMA FORMAL)*
+    ;
 
 definition
     : DEF CHUNK CHUNK ENDD

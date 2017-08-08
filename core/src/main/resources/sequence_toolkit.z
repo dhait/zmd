@@ -1,4 +1,4 @@
-section sequence_toolkit end
+section sequence_toolkit parents function_toolkit, number_toolkit end
 
 define langle \u3008
 define rangle \u3009

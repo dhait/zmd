@@ -1,18 +1,22 @@
-package org.optionmetrics.zmd.core.section;
+package org.optionmetrics.zmd.core.translate;
 
 import org.antlr.v4.runtime.tree.TerminalNode;
 import org.apache.commons.text.StringEscapeUtils;
+import org.optionmetrics.zmd.core.section.SectionParser;
+import org.optionmetrics.zmd.core.section.SectionParserBaseListener;
+import org.optionmetrics.zmd.core.translate.impl.Definition;
+import org.optionmetrics.zmd.core.translate.impl.Formal;
+import org.optionmetrics.zmd.core.translate.impl.Informal;
+import org.optionmetrics.zmd.core.translate.impl.SectionHeader;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class SectionListener extends SectionParserBaseListener {
 
     public List<Paragraph> paragraphs = new ArrayList<>();
     public List<String> formals = new ArrayList<>();
-    public Map<String, String> defines = new HashMap<>();
+    boolean generic = false;
 
     @Override
     public void exitFormals(SectionParser.FormalsContext ctx) {
@@ -20,6 +24,15 @@ public class SectionListener extends SectionParserBaseListener {
         for (TerminalNode t : ctx.NAME()) {
             formals.add(t.getText());
         }
+    }
+
+    @Override
+    public void exitGenformals(SectionParser.GenformalsContext ctx) {
+        formals.clear();
+        for (TerminalNode t : ctx.FORMAL()) {
+            formals.add(t.getText());
+        }
+        generic = true;
     }
 
     @Override
@@ -32,18 +45,21 @@ public class SectionListener extends SectionParserBaseListener {
     public void exitDefinition(SectionParser.DefinitionContext ctx) {
         String key = ctx.CHUNK(0).getText();
         String value = StringEscapeUtils.unescapeJava(ctx.CHUNK(1).getText());
-        defines.put(key,value);
+        Definition d = new Definition();
+        d.setKey(key);
+        d.setValue(value);
+        paragraphs.add(d);
     }
 
     @Override
     public void exitZedParagraph(SectionParser.ZedParagraphContext ctx) {
-        Paragraph p = new Formal(ctx.getText());
+        Paragraph p = new Formal(ctx.getText(), generic);
         paragraphs.add(p);
     }
 
     @Override
     public void exitSchemaParagraph(SectionParser.SchemaParagraphContext ctx) {
-        Paragraph p = new Formal(ctx.getText());
+        Paragraph p = new Formal(ctx.getText(), generic);
         paragraphs.add(p);
     }
 

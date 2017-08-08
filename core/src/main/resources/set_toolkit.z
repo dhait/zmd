@@ -1,1 +1,15 @@
 section set_toolkit end
+
+define rel      \u2194
+define fun      \u2192
+define neq      \u2260
+define notin    \u2209
+define emptyset \u2205
+define subseteq \u2286
+define subset   \u2282
+define cup      \u222A
+define cap      \u2229
+define symdiff  \u2296
+define bigcup   \u22C3
+define bigcap   \u22C2
+define finset   \ud835\udd32
