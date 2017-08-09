@@ -10,6 +10,7 @@ paragraph
     | schemaParagraph
     | sectionHeader
     | definition
+    | tag
     | informal
     ;
 
@@ -25,7 +26,10 @@ sectionHeader: 'section' NAME ('parents' sparents)? 'end' ;
 sparents : NAME (COMMA NAME)* ;
 
 gen: (LBRACKET NAME (COMMA NAME)* RBRACKET) ;
+
 definition : 'define' misc misc;
+
+tag : 'tag' misc;
 
 informal : misc+;
 

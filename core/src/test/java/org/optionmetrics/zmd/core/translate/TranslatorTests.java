@@ -21,6 +21,7 @@ public class TranslatorTests {
     public final TemporaryFolder tempFolder = new TemporaryFolder();
 
     private void copyFile(String name) throws IOException {
+        System.out.println(this.getClass().getResource("/" + name));
         InputStream inputStream = this.getClass().getResourceAsStream("/" + name);
         Path dest = Paths.get(tempFolder.getRoot().getPath(), name);
         Files.copy(inputStream, dest);
@@ -45,13 +46,11 @@ public class TranslatorTests {
 
         sectionProcessor.process("zpptest");
         for (Section s : sectionProcessor.getSections()) {
-            //System.out.println("Name: " + s.getName());
             for (Paragraph p : s.getParagraphs()) {
                 if (p instanceof Formal) {
                     System.out.println( ((Formal) p).getExpanded());
                 }
             }
-            //System.out.println("------");
         }
 
     }

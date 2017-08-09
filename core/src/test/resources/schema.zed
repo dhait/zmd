@@ -1,5 +1,0 @@
-\begin{schema}{System}
-  registers : REGISTERS\\
-  memory : MEMORY\\
-  output : \seq WORD
-\end{schema}

@@ -5,9 +5,13 @@ import org.commonmark.node.CustomNode;
 
 public class ZTreeNode extends CustomNode {
 
-    ParserRuleContext root;
+    private int sequence = 0;
 
-    public ZTreeNode(ParserRuleContext tree) {
-        root = tree;
+    public ZTreeNode(int seq) {
+        this.sequence = seq;
+    }
+
+    public int getSequence() {
+        return sequence;
     }
 }
