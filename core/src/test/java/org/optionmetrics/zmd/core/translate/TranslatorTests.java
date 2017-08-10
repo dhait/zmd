@@ -9,6 +9,7 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.optionmetrics.zmd.core.translate.impl.Formal;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -17,31 +18,35 @@ import java.nio.file.Paths;
 
 public class TranslatorTests {
 
-    @Rule
-    public final TemporaryFolder tempFolder = new TemporaryFolder();
 
-    private void copyFile(String name) throws IOException {
-        System.out.println(this.getClass().getResource("/" + name));
-        InputStream inputStream = this.getClass().getResourceAsStream("/" + name);
-        Path dest = Paths.get(tempFolder.getRoot().getPath(), name);
-        Files.copy(inputStream, dest);
+    @Rule
+    public TemporaryFolder tempfolder = new TemporaryFolder();
+
+ private void copyToolkit(String name, File dest) throws IOException {
+        InputStream inputStream = this.getClass().getResourceAsStream("/" + dest.getName() +"/" + name);
+        Files.copy(inputStream, dest.toPath().resolve(name));
+
     }
 
     @Test
     public void basicTest() throws Exception {
 
-        copyFile("function_toolkit.z");
-        copyFile("number_toolkit.z");
-        copyFile("prelude.z");
-        copyFile("relation_toolkit.z");
-        copyFile("sequence_toolkit.z");
-        copyFile("set_toolkit.z");
-        copyFile("standard_toolkit.z");
-        copyFile("zpptest.z");
+        File toolkit = tempfolder.newFolder("toolkit");
+        copyToolkit("function_toolkit.z", toolkit);
+        copyToolkit("number_toolkit.z", toolkit);
+        copyToolkit("prelude.z", toolkit);
+        copyToolkit("relation_toolkit.z", toolkit);
+        copyToolkit("sequence_toolkit.z", toolkit);
+        copyToolkit("set_toolkit.z", toolkit);
+        copyToolkit("standard_toolkit.z", toolkit);
 
-        Path toolKitDir = Paths.get(tempFolder.getRoot().getPath());
+        Environment environment = new Environment(toolkit.toPath());
 
-        Environment environment = new Environment(toolKitDir);
+        InputStream inputStream = this.getClass().getResourceAsStream("/zpptest.z");
+        Files.copy(inputStream, tempfolder.getRoot().toPath().resolve("zpptest.z"));
+
+        environment.addToSectionPath(tempfolder.getRoot().toPath());
+
         SectionProcessor sectionProcessor = new SectionProcessor(environment);
 
         sectionProcessor.process("zpptest");
