@@ -1,7 +1,6 @@
 package org.optionmetrics.zmd.core;
 
 import org.junit.Test;
-import org.optionmetrics.zmd.core.translate.Environment;
 
 import java.io.BufferedReader;
 import java.io.IOException;

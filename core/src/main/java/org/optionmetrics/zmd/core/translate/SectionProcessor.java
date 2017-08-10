@@ -9,18 +9,17 @@ import org.optionmetrics.zmd.core.translate.impl.Formal;
 import org.optionmetrics.zmd.core.translate.impl.SectionHeader;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.io.InputStream;
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class SectionProcessor {
 
-    private Environment environment;
+    private SearchPath searchPath;
     private List<Section> sections;
 
-    public SectionProcessor(Environment environment) {
-        this.environment = environment;
+    public SectionProcessor(SearchPath searchPath) {
+        this.searchPath = searchPath;
     }
 
     public List<Section> getSections() {
@@ -33,9 +32,9 @@ public class SectionProcessor {
         convertToZed();
     }
 
-    private List<Paragraph> load(Path source) throws IOException {
+    private List<Paragraph> load(InputStream fileStream) throws IOException {
 
-        CharStream stream = CharStreams.fromPath(source);
+        CharStream stream = CharStreams.fromStream(fileStream);
         TranslateLexer lexer = new TranslateLexer(stream);
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         TranslateParser parser = new TranslateParser(tokens);
@@ -53,18 +52,12 @@ public class SectionProcessor {
         }
         return parents;
     }
-    private List<Paragraph> filenameToParagraphs(List<Path> directories, String name) throws IOException {
+    private List<Paragraph> filenameToParagraphs(String name) throws IOException {
         List<Paragraph> paragraphs;
         String fname = name + ".z";
-        Path target = null;
-        for (Path d : directories) {
-            if (Files.exists(d.resolve(fname))) {
-                target = d.resolve(fname);
-                break;
-            }
-        }
-        if (target != null) {
-            paragraphs = load(target);
+        InputStream inputStream = searchPath.find(fname);
+        if (inputStream != null) {
+            paragraphs = load(inputStream);
         }
         else {
             throw new IOException("File: " + fname + " not found!");
@@ -72,17 +65,7 @@ public class SectionProcessor {
         return paragraphs;
     }
 
-
-    private List<Paragraph> filenameToParagraphs(String name) throws IOException {
-        List<Path> directories = new ArrayList<>();
-        directories.add(environment.getToolkitDir());
-        directories.addAll(environment.getSectionPath());
-        directories.add(environment.getCurrentDir());
-        return filenameToParagraphs(directories, name);
-    }
-
-
-    private List<Paragraph> addHeader(String name) throws IOException {
+     private List<Paragraph> addHeader(String name) throws IOException {
         List<Paragraph> ps = filenameToParagraphs(name);
 
         // split this list of paragraphs into two parts
