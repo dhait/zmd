@@ -1,1 +1,15 @@
 section relation_toolkit parents set_toolkit end
+
+defime maps \u21a6
+define comp \u2a3e
+define circ \u2218
+define dres \u25c1
+define rres \u25b7
+define ndres \u2a64
+define nrres \u2a65
+define inv \u223c
+define limg \u2987
+define rimg \u2988
+define oplus \u2295
+define plus +
+define star *

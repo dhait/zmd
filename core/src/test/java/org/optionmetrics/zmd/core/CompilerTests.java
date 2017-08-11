@@ -10,13 +10,13 @@ import java.io.Reader;
 public class CompilerTests {
 
     @Test
-    public void basicTest() throws IOException {
+    public void basicTest() throws Exception {
 
         Reader reader = new BufferedReader(new InputStreamReader(
                 this.getClass().getResourceAsStream("/" + "simpleText.md")));
 
-        Compiler processor = new Compiler();
-        processor.process(reader);
+        Compiler compiler = new Compiler();
+        compiler.process(reader);
 
     }
 }

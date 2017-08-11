@@ -5,7 +5,7 @@ import org.optionmetrics.zmd.core.translate.Paragraph;
 
 import java.util.Map;
 
-public class Formal implements Paragraph {
+public class Formal extends Paragraph {
 
     private final String text;
     private final boolean generic;
@@ -18,7 +18,8 @@ public class Formal implements Paragraph {
     private final String END = "\u2514";
     private final String VERT = "|";
 
-    public Formal(String text, boolean generic) {
+    public Formal(String text, boolean generic, String fileName) {
+        super(fileName);
         this.text = text;
         this.generic = generic;
     }

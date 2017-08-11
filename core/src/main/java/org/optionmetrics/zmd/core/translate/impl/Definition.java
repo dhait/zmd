@@ -2,9 +2,13 @@ package org.optionmetrics.zmd.core.translate.impl;
 
 import org.optionmetrics.zmd.core.translate.Paragraph;
 
-public class Definition implements Paragraph {
+public class Definition extends Paragraph {
     private String key;
     private String value;
+
+    public Definition(String fileName) {
+        super(fileName);
+    }
 
 
     public void setKey(String key) {
@@ -21,5 +25,10 @@ public class Definition implements Paragraph {
 
     public String getValue() {
         return value;
+    }
+
+    @Override
+    public String toString() {
+        return key + " = " + value;
     }
 }

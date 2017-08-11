@@ -5,10 +5,14 @@ import org.optionmetrics.zmd.core.translate.Paragraph;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SectionHeader implements Paragraph {
+public class SectionHeader extends Paragraph {
 
     private String sectionName;
     private List<String> parents = new ArrayList<>();
+
+    public SectionHeader(String fileName) {
+        super(fileName);
+    }
 
     public String getSectionName() {
         return sectionName;

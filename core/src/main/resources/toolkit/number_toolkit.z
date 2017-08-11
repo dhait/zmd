@@ -1,1 +1,6 @@
 section number_toolkit end
+
+define num \u2124
+define negate \u002d
+define leq \u2264
+define geq \u2265

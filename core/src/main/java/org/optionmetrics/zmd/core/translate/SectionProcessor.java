@@ -32,15 +32,16 @@ public class SectionProcessor {
         convertToZed();
     }
 
-    private List<Paragraph> load(InputStream fileStream) throws IOException {
+    private List<Paragraph> load(InputStream fileStream, String fileName) throws IOException {
 
         CharStream stream = CharStreams.fromStream(fileStream);
         TranslateLexer lexer = new TranslateLexer(stream);
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         TranslateParser parser = new TranslateParser(tokens);
         ParserRuleContext tree = parser.specification();
+        // add file tag
         ParseTreeWalker walker = new ParseTreeWalker();
-        SectionListener listener  = new SectionListener();
+        SectionListener listener  = new SectionListener(fileName);
         walker.walk(listener, tree);
         return listener.paragraphs;
     }
@@ -57,7 +58,7 @@ public class SectionProcessor {
         String fname = name + ".z";
         InputStream inputStream = searchPath.find(fname);
         if (inputStream != null) {
-            paragraphs = load(inputStream);
+            paragraphs = load(inputStream, fname);
         }
         else {
             throw new IOException("File: " + fname + " not found!");
@@ -78,18 +79,18 @@ public class SectionProcessor {
 
         if (pref.isEmpty()) {
             if (!suff.isEmpty() && !((SectionHeader) suff.get(0)).getSectionName().equals(name)) {
-                SectionHeader h = new SectionHeader();
+                SectionHeader h = new SectionHeader(name + ".z");
                 h.setSectionName(name);
                 ps.add(0, h);
             }
-        } else if (pref.stream().noneMatch(p->(p instanceof Formal))) { // pref contains no formals)
-            SectionHeader h = new SectionHeader();
+        } else if (pref.stream().anyMatch(p->(p instanceof Formal))) { // pref contains no formals)
+            SectionHeader h = new SectionHeader(name + ".z");
             h.setSectionName(name);
             h.getParents().add("standard_toolkit");
             ps.add(0, h);
         } else {
-            SectionHeader h = new SectionHeader();
-            h.setSectionName(name + "informal");
+            SectionHeader h = new SectionHeader("<none>");
+            h.setSectionName(name + "_informal");
             ps.add(0, h);
         }
         return ps;

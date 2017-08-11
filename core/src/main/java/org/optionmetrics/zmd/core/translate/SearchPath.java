@@ -12,7 +12,7 @@ import java.util.List;
 
 public class SearchPath {
 
-    enum SourceType {
+    public enum SourceType {
         RESOURCE_PATH,
         DIRECTORY
     }

@@ -4,25 +4,17 @@ This is a test of the markdown processor.
 
 ## Some code
 
-Here is some code.
-
-
+Here is some code:
 
 ```Z eval=false
 schema Abc 
    x : nat
 where
-   x geq 3
+   x > 3
 end
 ```
 
-Now we will create a new section.
-
-```Z eval=false
-section mysection end
-```
-
-And some more code:
+And some more:
 
 ```Z eval=false
 zed

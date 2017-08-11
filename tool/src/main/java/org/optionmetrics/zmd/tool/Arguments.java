@@ -11,13 +11,20 @@ public class Arguments {
     public Arguments(String[] args) {
 
         this.args = args;
-        options.addOption("h", "help", false, "show help.");
+        Option help = Option.builder("h")
+                .argName("help")
+                .desc("Show help")
+                .longOpt("help")
+                .build();
+
+
         Option version = Option.builder("v")
                 .argName("version")
                 .desc("Print current version")
                 .longOpt("version")
                 .build();
 
+        options.addOption(help);
         options.addOption(version);
 
     }
@@ -43,7 +50,7 @@ public class Arguments {
     private void help() {
         // This prints out some help
         HelpFormatter formater = new HelpFormatter();
-        formater.printHelp("Main", options);
+         formater.printHelp("zmd [options] input ...", options);
     }
 
 }

@@ -1,1 +1,9 @@
 section function_toolkit parents relation_toolkit end
+
+define pfun \u21f8
+define pinj \u2914
+define inj \u21a3
+define psurj \u2900
+define surj \u21a0
+define bij \u21f8
+define finj \u2915
