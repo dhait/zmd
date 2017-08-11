@@ -6,10 +6,9 @@ public class Definition extends Paragraph {
     private String key;
     private String value;
 
-    public Definition(String fileName) {
-        super(fileName);
+    public Definition(String fileName, int tag) {
+        super(fileName, tag);
     }
-
 
     public void setKey(String key) {
         this.key = key;

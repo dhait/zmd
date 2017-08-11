@@ -52,22 +52,4 @@ public class SearchPath {
         // not found
         return null;
     }
-/*        this.getClass().getResourceAsStream()
-        URL url;
-        url = this.getClass().getResource(name);
-        if (url == null) {
-            File f = new File(name);
-            if (!f.exists()) {
-                return null;
-            }
-            try {
-                url = f.toURI().toURL();
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            }
-        }
-        return url == null ? null :  url.openStream();
-
-    }
-    */
 }

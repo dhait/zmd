@@ -27,8 +27,11 @@ public class SectionProcessor {
     }
 
     public void process(String name) throws Exception {
+        // first parse and order the sections
         sortSections(name);
+        // replace the definitions with uniocde
         expandDefinitions();
+        // replace text keywords with zed box chars
         convertToZed();
     }
 
@@ -77,20 +80,22 @@ public class SectionProcessor {
             suff.remove(0);
         }
 
-        if (pref.isEmpty()) {
+        if (pref.isEmpty()) {  // the first paragraph was a section header, nothing before it
             if (!suff.isEmpty() && !((SectionHeader) suff.get(0)).getSectionName().equals(name)) {
-                SectionHeader h = new SectionHeader(name + ".z");
+                // add an extra section header, representing this file (different name)
+                SectionHeader h = new SectionHeader("section " + name + " end", name + ".z", -1);
                 h.setSectionName(name);
                 ps.add(0, h);
             }
-        } else if (pref.stream().anyMatch(p->(p instanceof Formal))) { // pref contains no formals)
-            SectionHeader h = new SectionHeader(name + ".z");
+        } else if (pref.stream().anyMatch(p->(p instanceof Formal))) { // there is at least one formal not in a section
+            SectionHeader h = new SectionHeader("section " + name + "parents standard_toolkit end", name + ".z", -1);
             h.setSectionName(name);
             h.getParents().add("standard_toolkit");
             ps.add(0, h);
-        } else {
-            SectionHeader h = new SectionHeader("<none>");
-            h.setSectionName(name + "_informal");
+        } else {  // everything is in sections except some initial informals
+            String sname = name + "_informal";
+            SectionHeader h = new SectionHeader("section " + sname + " end","<none>", -1);
+            h.setSectionName(sname);
             ps.add(0, h);
         }
         return ps;

@@ -18,8 +18,8 @@ public class Formal extends Paragraph {
     private final String END = "\u2514";
     private final String VERT = "|";
 
-    public Formal(String text, boolean generic, String fileName) {
-        super(fileName);
+    public Formal(String text, boolean generic, String fileName, int tag) {
+        super(fileName,tag);
         this.text = text;
         this.generic = generic;
     }

@@ -16,10 +16,11 @@ where
 end
 ```
 
-Now we will create a new section.
+Now we will create a new section.  We need to explicitly
+add the *standard_toolkit* as a parent:
 
 ```Z eval=false
-section mysection end
+section mysection parents standard_toolkit end
 ```
 
 And some more code:

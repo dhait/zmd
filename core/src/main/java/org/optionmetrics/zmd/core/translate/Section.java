@@ -91,6 +91,10 @@ public class Section {
                 Formal f = (Formal) p;
                 f.convertToZed();
             }
+            else if (p instanceof SectionHeader) {
+                SectionHeader h = (SectionHeader) p;
+                h.convertToZed();
+            }
         }
     }
 }

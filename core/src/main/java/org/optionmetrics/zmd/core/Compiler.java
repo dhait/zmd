@@ -1,5 +1,6 @@
 package org.optionmetrics.zmd.core;
 
+import org.antlr.v4.runtime.misc.MultiMap;
 import org.apache.commons.lang3.StringUtils;
 import org.commonmark.node.Node;
 import org.commonmark.parser.Parser;
@@ -9,13 +10,17 @@ import org.optionmetrics.zmd.core.translate.SearchPath;
 import org.optionmetrics.zmd.core.translate.Section;
 import org.optionmetrics.zmd.core.translate.SectionProcessor;
 import org.optionmetrics.zmd.core.translate.impl.Formal;
+import org.optionmetrics.zmd.core.translate.impl.SectionHeader;
 
-import java.io.*;
-import java.nio.file.Files;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.Reader;
 
 public class Compiler {
 
     public void process(Reader reader) throws Exception {
+
 
         Parser parser = Parser.builder()
                 .build();
@@ -31,10 +36,6 @@ public class Compiler {
         document.accept(translateVisitor);
         bw.close();
 
-        BufferedReader br = new BufferedReader(new FileReader(tmpFile.toString()));
-        br.lines().forEach(l->System.out.println(l));
-        br.close();
-
         // now we parse the file
         SearchPath searchPath = new SearchPath();
         searchPath.addItem(SearchPath.SourceType.RESOURCE_PATH, "/toolkit");
@@ -42,17 +43,26 @@ public class Compiler {
         searchPath.addItem(SearchPath.SourceType.DIRECTORY, tmpFile.getParent());
 
         SectionProcessor sectionProcessor = new SectionProcessor(searchPath);
-
         sectionProcessor.process(StringUtils.removeEnd(tmpFile.getName(), ".z"));
 
         // now the paragraphs have been translated
-        for (Section s : sectionProcessor.getSections()) {
+
+        // extract tagged paragraphs
+        MultiMap<Integer, String> blockMap = new MultiMap<>();
+        for (Section s: sectionProcessor.getSections()) {
             for (Paragraph p : s.getParagraphs()) {
                 if (p instanceof Formal) {
-                    System.out.println( ((Formal) p).getExpanded());
+                    // also add rendering
+                    blockMap.map(p.getTagId(), ((Formal)p).getExpanded());
+                }
+                else if (p instanceof SectionHeader) {
+                    blockMap.map(p.getTagId(), ((SectionHeader) p).getExpanded());
                 }
             }
         }
+
+        ReplaceVisitor replaceVisitor = new ReplaceVisitor(blockMap);
+        document.accept(replaceVisitor);
 
         HtmlRenderer renderer = HtmlRenderer.builder()
                 .nodeRendererFactory(context -> new NodeRenderer(context))

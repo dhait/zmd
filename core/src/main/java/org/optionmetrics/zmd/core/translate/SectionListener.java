@@ -15,6 +15,7 @@ public class SectionListener extends TranslateBaseListener {
     public List<Paragraph> paragraphs = new ArrayList<>();
     private List<String> formals = new ArrayList<>();
     private boolean generic = false;
+    private int currentTag = -1;
 
     public SectionListener(String fileName) {
         this.fileName = fileName;
@@ -39,7 +40,7 @@ public class SectionListener extends TranslateBaseListener {
 
     @Override
     public void exitInformal(TranslateParser.InformalContext ctx) {
-        Paragraph p = new Informal(ctx.getText(), fileName);
+        Paragraph p = new Informal(ctx.getText(), fileName, currentTag);
         paragraphs.add(p);
     }
 
@@ -47,7 +48,7 @@ public class SectionListener extends TranslateBaseListener {
     public void exitDefinition(TranslateParser.DefinitionContext ctx) {
         String key = ctx.misc(0).getText();
         String value = StringEscapeUtils.unescapeJava(ctx.misc(1).getText());
-        Definition d = new Definition(fileName);
+        Definition d = new Definition(fileName, currentTag);
         d.setKey(key);
         d.setValue(value);
         paragraphs.add(d);
@@ -55,9 +56,7 @@ public class SectionListener extends TranslateBaseListener {
 
     @Override
     public void exitTag(TranslateParser.TagContext ctx) {
-        int id = Integer.valueOf(ctx.misc().NUMBER().getText());
-        Tag t = new Tag(id, fileName);
-        paragraphs.add(t);
+        currentTag = Integer.valueOf(ctx.misc().NUMBER().getText());
     }
 
     private Paragraph getParagraph(ParserRuleContext ctx) {
@@ -67,7 +66,21 @@ public class SectionListener extends TranslateBaseListener {
             sb.append(" ");
         }
         sb.deleteCharAt(sb.length()-1);
-        return new Formal(sb.toString(), generic, fileName);
+        return new Formal(sb.toString(), generic, fileName, currentTag);
+    }
+
+    private Paragraph getSectionHeader(TranslateParser.SectionHeaderContext ctx) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("zed ");
+        for (ParseTree c : ctx.children) {
+            sb.append(c.getText());
+            sb.append(" ");
+        }
+        sb.deleteCharAt(sb.length()-1);
+        SectionHeader s = new SectionHeader(sb.toString(), fileName, currentTag);
+        s.setSectionName(ctx.NAME().getText());
+        s.getParents().addAll(formals);
+        return s;
     }
 
     @Override
@@ -90,10 +103,7 @@ public class SectionListener extends TranslateBaseListener {
 
     @Override
     public void exitSectionHeader(TranslateParser.SectionHeaderContext ctx) {
-        SectionHeader s = new SectionHeader(fileName);
-        s.setSectionName(ctx.NAME().getText());
-        s.getParents().addAll(formals);
-        paragraphs.add(s);
+        Paragraph p  = getSectionHeader(ctx);
+        paragraphs.add(p);
     }
-
 }
