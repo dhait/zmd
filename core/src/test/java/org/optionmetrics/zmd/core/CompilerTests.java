@@ -16,7 +16,7 @@ public class CompilerTests {
                 this.getClass().getResourceAsStream("/" + "simpleText.md")));
 
         Compiler compiler = new Compiler();
-        compiler.process(reader);
-
+        String result = compiler.process(reader);
+        System.out.println(result);
     }
 }

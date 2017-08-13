@@ -13,12 +13,22 @@ public class RenderVisitor extends ZOperatorParserBaseListener {
 
     @Override
     public void exitBaseSection(ZOperatorParser.BaseSectionContext ctx) {
-        html.append("section");
+        html.append("<div class=\"z-section\">\n");
+        for (int i=1; i < ctx.children.size()-1; i++) {
+            String t = ctx.children.get(i).getText();
+            html.append(" ").append(t);
+        }
+        html.append("</div>\n");
     }
 
     @Override
     public void exitInheritingSection(ZOperatorParser.InheritingSectionContext ctx) {
-        html.append("section");
+        html.append("<div class=\"z-section\">\n");
+        for (int i=1; i < ctx.children.size()-1; i++) {
+            String t = ctx.children.get(i).getText();
+            html.append(" ").append(t);
+        }
+        html.append("</div>\n");
     }
 
     @Override
@@ -68,11 +78,21 @@ public class RenderVisitor extends ZOperatorParserBaseListener {
 
     @Override
     public void exitNONOperatorTemplateParagraph(ZOperatorParser.NONOperatorTemplateParagraphContext ctx) {
-        html.append("Non operator");
+        html.append("<div class=\"z-text\">\n");
+        for (int i=1; i < ctx.children.size()-1; i++) {
+            String t = ctx.children.get(i).getText();
+            html.append(t);
+        }
+        html.append("</div>\n");
     }
 
     @Override
     public void exitOperatorTemplateParagraph(ZOperatorParser.OperatorTemplateParagraphContext ctx) {
-        html.append("Operator");
+        html.append("<div class=\"z-text\">\n");
+        for (int i=1; i < ctx.children.size()-1; i++) {
+            String t = ctx.children.get(i).getText();
+            html.append(t);
+        }
+        html.append("</div>\n");
     }
 }

@@ -19,7 +19,13 @@ import java.io.Reader;
 
 public class Compiler {
 
-    public void process(Reader reader) throws Exception {
+    private String result;
+
+    public String getResult() {
+        return result;
+    }
+
+    public String process(Reader reader) throws Exception {
 
 
         Parser parser = Parser.builder()
@@ -68,7 +74,7 @@ public class Compiler {
                 .nodeRendererFactory(context -> new NodeRenderer(context))
                 .build();
 
-        // TODO return string
-        System.out.println(renderer.render(document));
+        result = renderer.render(document);
+        return result;
     }
 }
