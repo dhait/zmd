@@ -1,0 +1,40 @@
+<assembly>
+    <id>dist</id>
+    <formats>
+        <format>zip</format>
+    </formats>
+    <files>
+        <file>
+            <source>target/${project.artifactId}.jar</source>
+            <outputDirectory>/</outputDirectory>
+        </file> <!--
+        <file>
+            <source>data/input/docId.txt</source>
+            <outputDirectory>data/input/</outputDirectory>
+        </file>
+        <file>
+            <source>data/export/exported_files_will_be_created_here.txt</source>
+            <outputDirectory>data/export/</outputDirectory>
+        </file>
+        <file>
+            <source>src/main/resources/dfc.properties</source>
+            <outputDirectory>/</outputDirectory>
+        </file>
+        <file>
+            <source>src/main/resources/dfc.keystore</source>
+            <outputDirectory>/</outputDirectory>
+        </file>
+        -->
+
+    </files>
+    <fileSets>
+        <fileSet>
+            <directory>${project.basedir}</directory>
+            <includes>
+                <include>*.cmd</include>
+                <include>README.pdf</include>
+            </includes>
+            <useDefaultExcludes>true</useDefaultExcludes>
+        </fileSet>
+    </fileSets>
+</assembly>
