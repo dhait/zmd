@@ -5,7 +5,7 @@
     </formats>
     <files>
         <file>
-            <source>target/${project.artifactId}.jar</source>
+            <source>target/zmd-cli.jar</source>
             <outputDirectory>/</outputDirectory>
         </file> <!--
         <file>
@@ -20,14 +20,14 @@
             <source>src/main/resources/dfc.properties</source>
             <outputDirectory>/</outputDirectory>
         </file>
+        -->
         <file>
-            <source>src/main/resources/dfc.keystore</source>
+            <source>src/main/zmd</source>
             <outputDirectory>/</outputDirectory>
         </file>
-        -->
-
     </files>
     <fileSets>
+        <!--
         <fileSet>
             <directory>${project.basedir}</directory>
             <includes>
@@ -36,5 +36,6 @@
             </includes>
             <useDefaultExcludes>true</useDefaultExcludes>
         </fileSet>
+        -->
     </fileSets>
 </assembly>

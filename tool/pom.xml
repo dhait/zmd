@@ -65,7 +65,7 @@
                         <goal>single</goal>
                     </goals>
                     <configuration>
-                        <finalName>${project.artifactId}</finalName>
+                        <finalName>zmd-cli</finalName>
                         <appendAssemblyId>false</appendAssemblyId>
                         <descriptorRefs>
                             <descriptorRef>jar-with-dependencies</descriptorRef>
