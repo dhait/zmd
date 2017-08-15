@@ -3,8 +3,8 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/core/core.iml" filepath="$PROJECT_DIR$/core/core.iml" />
-      <module fileurl="file://$PROJECT_DIR$/tool/tool.iml" filepath="$PROJECT_DIR$/tool/tool.iml" />
       <module fileurl="file://$PROJECT_DIR$/zmd.iml" filepath="$PROJECT_DIR$/zmd.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tool/zmd-tool.iml" filepath="$PROJECT_DIR$/tool/zmd-tool.iml" />
     </modules>
   </component>
 </project>

@@ -21,6 +21,7 @@ public class Main {
                 Main.class.getResourceAsStream("/" + "simpleText.md")));
 
         Compiler processor = new Compiler();
-        processor.process(reader);
+        String result = processor.process(reader);
+        System.out.println(result);
     }
 }
