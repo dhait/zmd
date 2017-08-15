@@ -26,59 +26,58 @@
  *  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.optionmetrics.zmd.tool;
+package org.optionmetrics.zmd.core.render;
 
-import org.apache.commons.cli.*;
+import org.commonmark.node.FencedCodeBlock;
+import org.commonmark.node.Node;
+import org.commonmark.renderer.html.CoreHtmlNodeRenderer;
+import org.commonmark.renderer.html.HtmlNodeRendererContext;
+import org.commonmark.renderer.html.HtmlWriter;
+import org.optionmetrics.zmd.core.ZInfo;
+import org.optionmetrics.zmd.core.ZTreeNode;
+import org.optionmetrics.zmd.core.parse.CodeParser;
 
-public class Arguments {
+import java.util.Set;
 
-    private final String[] args;
-    private Options options = new Options();
+import static java.util.Collections.singleton;
 
+public class NodeRenderer extends CoreHtmlNodeRenderer {
 
-    public Arguments(String[] args) {
+    private CodeParser parser = new CodeParser();
 
-        this.args = args;
-        Option help = Option.builder("h")
-                .argName("help")
-                .desc("Show help")
-                .longOpt("help")
-                .build();
-
-
-        Option version = Option.builder("v")
-                .argName("version")
-                .desc("Print current version")
-                .longOpt("version")
-                .build();
-
-        options.addOption(help);
-        options.addOption(version);
-
+    public NodeRenderer(HtmlNodeRendererContext context) {
+        super(context);
     }
 
-    public void parse() {
-        CommandLineParser parser = new DefaultParser();
-        CommandLine cmd = null;
-        try {
-            cmd = parser.parse(options, args);
-            if (cmd.hasOption("h"))
-                help();
-            if (cmd.hasOption("v")) {
-                String v = this.getClass().getPackage().getImplementationVersion();
-                System.out.println("Version: " + v);
-            }
-        } catch (ParseException e) {
-            System.err.println("Failed to parse comand line properties");
-            help();
+
+    @Override
+    public Set<Class<? extends Node>> getNodeTypes() {
+        return singleton(FencedCodeBlock.class);
+    }
+
+    public void zrender(ZTreeNode znode) {
+        String code = znode.getCode();
+        if (code != null) {
+            String htmlText = parser.parse(code);
+
+            HtmlWriter html = context.getWriter();
+            html.line();
+            html.raw(htmlText);
+            html.line();
         }
-
     }
 
-    private void help() {
-        // This prints out some help
-        HelpFormatter formater = new HelpFormatter();
-         formater.printHelp("zmd [options] input ...", options);
-    }
 
+    @Override
+    public void render(Node node) {
+        FencedCodeBlock fencedCodeBlock = (FencedCodeBlock) node;
+        ZInfo info = new ZInfo(fencedCodeBlock.getInfo());
+        if (info.isZ()) {
+            ZTreeNode znode = (ZTreeNode) fencedCodeBlock.getFirstChild();
+            zrender(znode);
+        }
+        else {
+            super.render(node);
+        }
+    }
 }

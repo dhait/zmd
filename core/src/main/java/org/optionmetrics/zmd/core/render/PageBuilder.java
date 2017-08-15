@@ -26,59 +26,38 @@
  *  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.optionmetrics.zmd.tool;
+package org.optionmetrics.zmd.core.render;
 
-import org.apache.commons.cli.*;
+import freemarker.template.Configuration;
+import freemarker.template.Template;
+import freemarker.template.TemplateException;
 
-public class Arguments {
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.StringWriter;
+import java.util.HashMap;
+import java.util.Map;
 
-    private final String[] args;
-    private Options options = new Options();
+import static org.apache.commons.lang3.CharEncoding.UTF_8;
+
+public class PageBuilder {
+
+    private Configuration configuration = new Configuration(Configuration.getVersion());
+
+    public PageBuilder() {
+        configuration.setClassForTemplateLoading(this.getClass(), "/html/");
+    }
+    public String build(Map<String,String> root) throws IOException, TemplateException {
+
+        Template temp = configuration.getTemplate("ztemplate.ftl");
 
 
-    public Arguments(String[] args) {
-
-        this.args = args;
-        Option help = Option.builder("h")
-                .argName("help")
-                .desc("Show help")
-                .longOpt("help")
-                .build();
-
-
-        Option version = Option.builder("v")
-                .argName("version")
-                .desc("Print current version")
-                .longOpt("version")
-                .build();
-
-        options.addOption(help);
-        options.addOption(version);
+        StringWriter writer = new StringWriter();
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        temp.process(root, new OutputStreamWriter(stream));
+        String str = stream.toString(UTF_8);
+        return str;
 
     }
-
-    public void parse() {
-        CommandLineParser parser = new DefaultParser();
-        CommandLine cmd = null;
-        try {
-            cmd = parser.parse(options, args);
-            if (cmd.hasOption("h"))
-                help();
-            if (cmd.hasOption("v")) {
-                String v = this.getClass().getPackage().getImplementationVersion();
-                System.out.println("Version: " + v);
-            }
-        } catch (ParseException e) {
-            System.err.println("Failed to parse comand line properties");
-            help();
-        }
-
-    }
-
-    private void help() {
-        // This prints out some help
-        HelpFormatter formater = new HelpFormatter();
-         formater.printHelp("zmd [options] input ...", options);
-    }
-
 }

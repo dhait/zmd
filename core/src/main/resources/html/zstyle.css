@@ -1,0 +1,83 @@
+div.z-zed
+{
+    font-family:"Noto Sans","Noto Sans CJK JP",sans-serif;
+    padding-left:2em;
+    margin-top:1em;
+    margin-bottom:1em;
+    color:#9400d3
+}
+
+div.z-axdef
+{
+    font-family:"Noto Sans","Noto Sans CJK JP",sans-serif;
+    font-style:italic;
+    margin-left:2em;
+    margin-right:2em;
+    border-left:solid #000 1px
+}
+
+div.z-axdef .z-decl
+{
+    padding-left:1em;
+    padding-top:.5em;
+    padding-bottom:.5em;
+    color:#9400d3
+}
+
+div.z-axdef .z-pred
+{
+    border-top:solid green 1px;
+    padding-left:1em;
+    padding-top:.5em;
+    padding-bottom:.5em;
+    width:30em;
+    color:#9400d3
+}
+
+div.z-schema
+{
+    font-family:"Noto Sans","Noto Sans CJK JP",sans-serif;
+    font-style:italic;
+    margin-left:2em;
+    margin-right:2em;
+    border-left:solid #000 1px;
+    border-top:solid #000 1px;
+    border-bottom:solid #000 1px;
+    font-family:"Noto Sans","Noto Sans CJK JP",sans-serif;
+    font-style:italic;
+    margin-left:2em;
+    margin-right:2em;
+    border-left:solid #000 1px;
+    border-top:double #000 3px;
+    border-bottom:solid #000 1px
+}
+
+div.z-schema .z-decl
+{
+    padding-left:1em;
+    padding-top:0;
+    padding-bottom:.5em;
+    color:#9400d3
+}
+
+div.z-schema .z-pred
+{
+    border-top:solid green 1px;
+    padding-left:1em;
+    padding-top:.5em;
+    padding-bottom:.5em;
+    width:50%;
+    color:#9400d3
+}
+
+div.z-schema .z-schema-name
+{
+    display:inline-block;
+    background:#fff;
+    position:relative;
+    bottom:.75em;
+    left:1em;
+    padding-left:.2em;
+    padding-right:.2em;
+    color:#9400d3
+}

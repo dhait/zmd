@@ -26,59 +26,24 @@
  *  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.optionmetrics.zmd.tool;
+package org.optionmetrics.zmd.core.render;
 
-import org.apache.commons.cli.*;
+import freemarker.template.TemplateException;
+import org.junit.Test;
 
-public class Arguments {
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
-    private final String[] args;
-    private Options options = new Options();
+public class PageBuilderTests {
 
+    PageBuilder builder = new PageBuilder();
 
-    public Arguments(String[] args) {
+    @Test
+    public void basicTest() throws IOException, TemplateException {
+        Map<String, String> root = new HashMap<>();
 
-        this.args = args;
-        Option help = Option.builder("h")
-                .argName("help")
-                .desc("Show help")
-                .longOpt("help")
-                .build();
-
-
-        Option version = Option.builder("v")
-                .argName("version")
-                .desc("Print current version")
-                .longOpt("version")
-                .build();
-
-        options.addOption(help);
-        options.addOption(version);
-
+        root.put("body", "ABCD");
+        System.out.println(builder.build(root));
     }
-
-    public void parse() {
-        CommandLineParser parser = new DefaultParser();
-        CommandLine cmd = null;
-        try {
-            cmd = parser.parse(options, args);
-            if (cmd.hasOption("h"))
-                help();
-            if (cmd.hasOption("v")) {
-                String v = this.getClass().getPackage().getImplementationVersion();
-                System.out.println("Version: " + v);
-            }
-        } catch (ParseException e) {
-            System.err.println("Failed to parse comand line properties");
-            help();
-        }
-
-    }
-
-    private void help() {
-        // This prints out some help
-        HelpFormatter formater = new HelpFormatter();
-         formater.printHelp("zmd [options] input ...", options);
-    }
-
 }

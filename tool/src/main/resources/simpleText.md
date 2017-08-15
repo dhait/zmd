@@ -10,7 +10,7 @@ Here is some code:
 schema Abc 
    x : nat
 where
-   x > 3
+   x geq 3
 end
 ```
 
