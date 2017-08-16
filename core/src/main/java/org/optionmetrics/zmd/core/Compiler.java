@@ -42,12 +42,10 @@ import org.optionmetrics.zmd.core.translate.SectionProcessor;
 import org.optionmetrics.zmd.core.translate.impl.Formal;
 import org.optionmetrics.zmd.core.translate.impl.SectionHeader;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.Reader;
+import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class Compiler {
 
@@ -110,7 +108,16 @@ public class Compiler {
         PageBuilder builder = new PageBuilder();
 
         Map<String, String> root = new HashMap<>();
+
+
+        InputStream cssFile = this.getClass().getResourceAsStream("/html/zstyle.css");
+        BufferedReader cssReader = new BufferedReader(new InputStreamReader(cssFile));
+        String css = cssReader.lines().collect(Collectors.joining());
+
         root.put("body", result);
+        root.put("css", css);
+
+
 
         String page = builder.build(root);
         return page;

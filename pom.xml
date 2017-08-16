@@ -7,7 +7,7 @@
     <groupId>org.optionmetrics.zmd</groupId>
     <artifactId>zmd</artifactId>
     <packaging>pom</packaging>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0</version>
 
     <name>zmd</name>
     <description>Z Specification Markdown Processor</description>
@@ -44,16 +44,6 @@
     </properties>
 
     <build>
-        <resources>
-            <resource>
-                <directory>resources</directory>
-            </resource>
-        </resources>
-        <testResources>
-            <testResource>
-                <directory>test</directory>
-            </testResource>
-        </testResources>
         <pluginManagement>
             <plugins>
                 <plugin>
