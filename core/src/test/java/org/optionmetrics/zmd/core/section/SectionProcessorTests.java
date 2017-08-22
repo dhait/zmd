@@ -26,30 +26,27 @@
  *  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.optionmetrics.zmd.tool;
+package org.optionmetrics.zmd.core.section;
 
-import org.optionmetrics.zmd.core.Compiler;
-import org.apache.commons.cli.*;
+import org.junit.Test;
 
-import java.io.*;
+public class SectionProcessorTests {
 
-public class Main {
+    @Test
+    public void basicTest() throws Exception {
 
-    Compiler compiler = new Compiler();
+        SearchPath searchPath = new SearchPath();
+        searchPath.addItem(SearchPath.SourceType.RESOURCE_PATH, "/toolkit");
+        searchPath.addItem(SearchPath.SourceType.RESOURCE_PATH, "");
 
-    public static void main(String [] args) throws Exception {
+        SectionProcessor sectionProcessor = new SectionProcessor(searchPath);
 
-        Arguments arguments = new Arguments(args);
-        arguments.parse();
+        sectionProcessor.process("zpptest");
+        for (Section s : sectionProcessor.getSections()) {
+            for (Paragraph p : s.getParagraphs()) {
+                System.out.println( p);
+            }
+        }
 
-        String[] files = arguments.getRemaining();
-
-        InputStream inputStream = new FileInputStream(files[0]);
-
-        Reader reader = new BufferedReader(new InputStreamReader(inputStream));
-
-        Compiler processor = new Compiler();
-        String result = processor.process(reader);
-        System.out.println(result);
     }
 }

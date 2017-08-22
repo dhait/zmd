@@ -33,7 +33,7 @@ tag : 'tag' misc;
 
 informal : misc+;
 
-misc: NAME | NUMBER | WORD | COMMA | DOUBLEEQ | FREEEQ |
+misc: NAME | NUMBER | WORD | COMMA | DOUBLEEQ | FREEEQ | LBRACKET | RBRACKET |
       LBIND | RBIND | LANGLE | RANGLE | NL | UNICODE+ | ESC ;
 
 COMMENT : '/*' .*? '*/' -> channel(HIDDEN);

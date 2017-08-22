@@ -26,14 +26,13 @@
  *  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.optionmetrics.zmd.core.translate;
+package org.optionmetrics.zmd.core.section;
 
 import org.apache.commons.text.StringEscapeUtils;
-import org.optionmetrics.zmd.core.translate.impl.Definition;
-import org.optionmetrics.zmd.core.translate.impl.Formal;
-import org.optionmetrics.zmd.core.translate.impl.SectionHeader;
+import org.optionmetrics.zmd.core.section.impl.Definition;
+import org.optionmetrics.zmd.core.section.impl.Formal;
+import org.optionmetrics.zmd.core.section.impl.SectionHeader;
 
-import java.text.Normalizer;
 import java.util.*;
 
 
@@ -42,7 +41,7 @@ public class Section {
     private List<Paragraph> paragraphs = new ArrayList<>();
     private Map<String, String> definitions = new HashMap<>();
 
-        enum Mark {
+        public enum Mark {
         NONE,
         TEMP,
         PERM
@@ -64,7 +63,7 @@ public class Section {
         return (getSectionHeader()).getParents();
     }
 
-    void visit(Set<Section> sections, List<Section> sorted) throws Exception {
+    public void visit(Set<Section> sections, List<Section> sorted) throws Exception {
         if (mark == Mark.PERM)
             return;
         if (mark == Mark.TEMP) {

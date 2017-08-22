@@ -26,15 +26,15 @@
  *  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.optionmetrics.zmd.core.translate;
+package org.optionmetrics.zmd.core.section;
 
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
-import org.optionmetrics.zmd.core.translate.impl.Formal;
-import org.optionmetrics.zmd.core.translate.impl.SectionHeader;
+import org.optionmetrics.zmd.core.section.impl.Formal;
+import org.optionmetrics.zmd.core.section.impl.SectionHeader;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -55,25 +55,32 @@ public class SectionProcessor {
     }
 
     public void process(String name) throws Exception {
-        // first parse and order the sections
+        // parse and order the sections
         sortSections(name);
-        // replace the definitions with uniocde
-        expandDefinitions();
-        // replace text keywords with zed box chars
-        convertToZed();
     }
 
     private List<Paragraph> load(InputStream fileStream, String fileName) throws IOException {
 
         CharStream stream = CharStreams.fromStream(fileStream);
-        TranslateLexer lexer = new TranslateLexer(stream);
+        SectionLexer lexer = new SectionLexer(stream);
         CommonTokenStream tokens = new CommonTokenStream(lexer);
-        TranslateParser parser = new TranslateParser(tokens);
+        SectionParser parser = new SectionParser(tokens);
+        parser.removeErrorListeners();
+        SectionErrorListener errorListener = new SectionErrorListener(fileName);
+        parser.addErrorListener(errorListener);
+
         ParserRuleContext tree = parser.specification();
-        // add file tag
-        ParseTreeWalker walker = new ParseTreeWalker();
-        SectionListener listener  = new SectionListener(fileName);
-        walker.walk(listener, tree);
+
+        SectionListenerImpl listener = new SectionListenerImpl(tokens, fileName);
+
+        String s = listener.getRewriter().getText();
+        if (errorListener.getErrorCount() > 0) {
+            System.err.println(errorListener.getErrorCount() + " errors in file " + fileName);
+        } else {
+            // add file tag
+            ParseTreeWalker walker = new ParseTreeWalker();
+            walker.walk(listener, tree);
+        }
         return listener.paragraphs;
     }
 

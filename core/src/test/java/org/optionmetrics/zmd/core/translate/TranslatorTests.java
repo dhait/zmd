@@ -33,30 +33,16 @@ import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.junit.Test;
-import org.optionmetrics.zmd.core.translate.impl.Formal;
+import org.optionmetrics.zmd.core.section.Paragraph;
+import org.optionmetrics.zmd.core.section.SearchPath;
+import org.optionmetrics.zmd.core.section.Section;
+import org.optionmetrics.zmd.core.section.SectionProcessor;
+import org.optionmetrics.zmd.core.section.impl.Formal;
 
 public class TranslatorTests {
 
 
-    @Test
-    public void basicTest() throws Exception {
 
-        SearchPath searchPath = new SearchPath();
-        searchPath.addItem(SearchPath.SourceType.RESOURCE_PATH, "/toolkit");
-        searchPath.addItem(SearchPath.SourceType.RESOURCE_PATH, "");
-
-        SectionProcessor sectionProcessor = new SectionProcessor(searchPath);
-
-        sectionProcessor.process("zpptest");
-        for (Section s : sectionProcessor.getSections()) {
-            for (Paragraph p : s.getParagraphs()) {
-                if (p instanceof Formal) {
-                    System.out.println( ((Formal) p).getExpanded());
-                }
-            }
-        }
-
-    }
     @Test
     public void parseTest() {
         String input = "section testme end\n" +

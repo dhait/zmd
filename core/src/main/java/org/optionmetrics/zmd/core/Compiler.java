@@ -35,12 +35,12 @@ import org.commonmark.parser.Parser;
 import org.commonmark.renderer.html.HtmlRenderer;
 import org.optionmetrics.zmd.core.render.NodeRenderer;
 import org.optionmetrics.zmd.core.render.PageBuilder;
-import org.optionmetrics.zmd.core.translate.Paragraph;
-import org.optionmetrics.zmd.core.translate.SearchPath;
-import org.optionmetrics.zmd.core.translate.Section;
-import org.optionmetrics.zmd.core.translate.SectionProcessor;
-import org.optionmetrics.zmd.core.translate.impl.Formal;
-import org.optionmetrics.zmd.core.translate.impl.SectionHeader;
+import org.optionmetrics.zmd.core.section.Paragraph;
+import org.optionmetrics.zmd.core.section.SearchPath;
+import org.optionmetrics.zmd.core.section.Section;
+import org.optionmetrics.zmd.core.section.SectionProcessor;
+import org.optionmetrics.zmd.core.section.impl.Formal;
+import org.optionmetrics.zmd.core.section.impl.SectionHeader;
 
 import java.io.*;
 import java.util.HashMap;

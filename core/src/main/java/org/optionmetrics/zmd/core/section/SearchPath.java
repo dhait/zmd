@@ -26,30 +26,58 @@
  *  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.optionmetrics.zmd.tool;
+package org.optionmetrics.zmd.core.section;
 
-import org.optionmetrics.zmd.core.Compiler;
-import org.apache.commons.cli.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
-import java.io.*;
+public class SearchPath {
 
-public class Main {
+    public enum SourceType {
+        RESOURCE_PATH,
+        DIRECTORY
+    }
 
-    Compiler compiler = new Compiler();
+    class Source {
+        SourceType type;
+        String path;
+        Source(SourceType type, String path) {
+            this.type = type;
+            this.path = path;
+        }
+    }
 
-    public static void main(String [] args) throws Exception {
+    List<Source> sources = new ArrayList<>();
 
-        Arguments arguments = new Arguments(args);
-        arguments.parse();
 
-        String[] files = arguments.getRemaining();
+    public void addItem(SourceType type, String path ) {
+        sources.add(new Source(type, path));
+    }
 
-        InputStream inputStream = new FileInputStream(files[0]);
-
-        Reader reader = new BufferedReader(new InputStreamReader(inputStream));
-
-        Compiler processor = new Compiler();
-        String result = processor.process(reader);
-        System.out.println(result);
+    public InputStream find(String name) throws IOException {
+        for (Source s : sources) {
+            if (s.type == SourceType.RESOURCE_PATH) {
+                URL url = this.getClass().getResource(s.path + File.separatorChar + name);
+                if (url != null) {
+                    return url.openStream();
+                }
+            }
+            else if (s.type == SourceType.DIRECTORY) {
+                File f = new File(s.path, name);
+                if (f.exists()) {
+                    URL url = f.toURI().toURL();
+                    return url.openStream();
+                }
+            }
+        }
+        // not found
+        return null;
     }
 }

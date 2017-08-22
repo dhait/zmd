@@ -1,7 +1,7 @@
-package org.optionmetrics.zmd.core.translate.impl;
+package org.optionmetrics.zmd.core.section.impl;
 
 
-import org.optionmetrics.zmd.core.translate.Paragraph;
+import org.optionmetrics.zmd.core.section.Paragraph;
 
 public class Informal extends Paragraph {
     private final String text;

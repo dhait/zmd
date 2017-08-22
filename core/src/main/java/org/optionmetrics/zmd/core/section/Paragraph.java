@@ -26,7 +26,7 @@
  *  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.optionmetrics.zmd.core.translate;
+package org.optionmetrics.zmd.core.section;
 
 public abstract class Paragraph {
 

@@ -26,58 +26,31 @@
  *  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.optionmetrics.zmd.core.translate;
+package org.optionmetrics.zmd.core.section;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
+import org.antlr.v4.runtime.BaseErrorListener;
+import org.antlr.v4.runtime.CommonToken;
+import org.antlr.v4.runtime.RecognitionException;
+import org.antlr.v4.runtime.Recognizer;
 
-public class SearchPath {
+public class SectionErrorListener extends BaseErrorListener {
 
-    public enum SourceType {
-        RESOURCE_PATH,
-        DIRECTORY
+    private final String fileName;
+    private int errorCount = 0;
+
+    public SectionErrorListener(String fileName) {
+        this.fileName = fileName;
     }
 
-    class Source {
-        SourceType type;
-        String path;
-        Source(SourceType type, String path) {
-            this.type = type;
-            this.path = path;
-        }
+    public int getErrorCount() {
+        return errorCount;
     }
 
-    List<Source> sources = new ArrayList<>();
-
-
-    public void addItem(SourceType type, String path ) {
-        sources.add(new Source(type, path));
-    }
-
-    public InputStream find(String name) throws IOException {
-        for (Source s : sources) {
-            if (s.type == SourceType.RESOURCE_PATH) {
-                URL url = this.getClass().getResource(s.path + File.separatorChar + name);
-                if (url != null) {
-                    return url.openStream();
-                }
-            }
-            else if (s.type == SourceType.DIRECTORY) {
-                File f = new File(s.path, name);
-                if (f.exists()) {
-                    URL url = f.toURI().toURL();
-                    return url.openStream();
-                }
-            }
-        }
-        // not found
-        return null;
+    @Override
+    public void syntaxError(Recognizer<?, ?> recognizer, Object offendingSymbol, int line, int charPositionInLine, String msg,
+                                        RecognitionException e) {
+        System.err.println("Error: " + fileName + ", line " + line + ": syntax error near '" +
+                ((CommonToken) offendingSymbol).getText() +"'" );
+        errorCount++;
     }
 }

@@ -32,9 +32,9 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import org.optionmetrics.zmd.core.section.SearchPath;
 
 import java.io.IOException;
-import java.nio.file.Paths;
 
 public class SearchPathTests {
 
