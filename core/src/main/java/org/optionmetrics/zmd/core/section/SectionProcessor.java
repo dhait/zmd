@@ -81,7 +81,7 @@ public class SectionProcessor {
             ParseTreeWalker walker = new ParseTreeWalker();
             walker.walk(listener, tree);
         }
-        return listener.paragraphs;
+        return listener.getParagraphs();
     }
 
     private Set<String> sectionsToParents(Collection<Section> sections) {
@@ -210,34 +210,5 @@ public class SectionProcessor {
         names.add("prelude");
         Set<Section> sectionSet = readSpec(names, null);
         sections = orderSections(sectionSet);
-    }
-
-    private void expandDefinitions() {
-        Map<String, Map<String, String> > defsBySection = new HashMap<>();
-        Map<String, Map<String, String> > cumDefs = new HashMap<>();
-        // first collect definitions
-        for (Section s : sections) {
-            s.collectDefinitions();
-            defsBySection.put(s.getName(), s.getDefinitions());
-            cumDefs.put(s.getName(), s.getDefinitions());
-        }
-        // now cascade down
-        for (Section s : sections) {
-            Map<String, String> cumDef = cumDefs.get(s.getName());
-            cumDef.putAll(defsBySection.get("prelude"));
-            for (String p : s.getParents()) {
-                if (cumDefs.containsKey(p))
-                    cumDef.putAll(cumDefs.get(p));
-            }
-            cumDefs.put(s.getName(), cumDef);
-
-            s.expandDefinitions(cumDef);
-        }
-    }
-
-    private void convertToZed() {
-        for (Section s : sections) {
-            s.convertToZed();
-        }
     }
 }

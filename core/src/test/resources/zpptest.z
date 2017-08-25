@@ -1,14 +1,15 @@
 section testme parents standard_toolkit end
 
-define a1 def end
+define \a1 def end
 
 zed
-  forall x : X @ x >= 3
+  forall x : X @ x+1 >= 3
 end
 
 // test again
 
 zed
+  X : : = tom, dick, harry
   A cup B subset C
 end
 

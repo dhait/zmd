@@ -8,7 +8,6 @@ import java.util.Map;
 public class Formal extends Paragraph {
 
     private final String text;
-    private final boolean generic;
     private String expanded;
 
     private final String AX = "\u2577";
@@ -18,10 +17,9 @@ public class Formal extends Paragraph {
     private final String END = "\u2514";
     private final String VERT = "|";
 
-    public Formal(String text, boolean generic, String fileName, int tag) {
+    public Formal(String text, String fileName, int tag) {
         super(fileName,tag);
         this.text = text;
-        this.generic = generic;
     }
 
     @Override
@@ -42,13 +40,6 @@ public class Formal extends Paragraph {
     }
 
     public void convertToZed() {
-        if (generic) {
-            expanded = expanded.replace("zed", ZED)
-                    .replace("axiom", AX+GEN)
-                    .replace("schema", SCH+GEN)
-                    .replace("where", VERT )
-                    .replace("end", END);
-        }
         expanded = expanded.replace("zed", ZED)
                 .replace("axiom", AX)
                 .replace("schema", SCH)

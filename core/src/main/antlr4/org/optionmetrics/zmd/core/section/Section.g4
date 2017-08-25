@@ -5,18 +5,20 @@ specification
 	;
 
 paragraph
-    : keyword (TEXT | COMMA)* END             #StandardParagraph
-    | SECTION sname (PARENTS sparents)? END #SectionHeader
+    : DEFINE DEFSYM defstring END               #Define
+    | keyword (TEXT | DEFSYM | COMMA )*  END    #StandardParagraph
+    | SECTION sname (PARENTS sparents)? END     #SectionHeader
     ;
 
-sname : TEXT+;
+defstring : (UNICODE | TEXT);
+
+sname : TEXT;
 
 sparents : sname (COMMA sname)* ;
 
 keyword : ZED
         | AXIOM
         | SCHEMA
-        | DEFINE
         ;
 
 COMMENT : '/*' .*? '*/' -> channel(HIDDEN);
@@ -28,7 +30,13 @@ SCHEMA : 'schema' ;
 DEFINE : 'define' ;
 PARENTS : 'parent' 's'?;
 END : 'end' ;
+UNICODE : ('\\u' HEX HEX HEX HEX)+;
+DEFSYM : '\\' ~[ \t\r\n,]+ ;
+SEMI : ';';
 COMMA : ',';
-EOL : [ \r\n] -> channel(HIDDEN);
-TEXT : .+?  ;
+WS : [ \t\r\n] -> channel(HIDDEN);
+// everything else
+TEXT : ~[ \t\r\n,]+  ;
+
+fragment HEX : [0-9a-fA-F];
 

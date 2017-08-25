@@ -28,11 +28,9 @@
 
 package org.optionmetrics.zmd.core.section;
 
-import org.antlr.v4.runtime.BufferedTokenStream;
-import org.antlr.v4.runtime.ParserRuleContext;
-import org.antlr.v4.runtime.Token;
-import org.antlr.v4.runtime.TokenStreamRewriter;
+import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.ParseTree;
+import org.antlr.v4.runtime.tree.TerminalNode;
 import org.optionmetrics.zmd.core.section.impl.*;
 
 import java.util.ArrayList;
@@ -41,9 +39,8 @@ import java.util.List;
 public class SectionListenerImpl extends SectionBaseListener {
 
     private final String fileName;
-    public List<Paragraph> paragraphs = new ArrayList<>();
+    private List<Paragraph> paragraphs = new ArrayList<>();
     private List<String> formals = new ArrayList<>();
-    private boolean generic = false;
     private int currentTag = -1;
     private BufferedTokenStream tokens;
     private TokenStreamRewriter rewriter;
@@ -58,15 +55,47 @@ public class SectionListenerImpl extends SectionBaseListener {
         return rewriter;
     }
 
+    public List<Paragraph> getParagraphs() {
+        return paragraphs;
+    }
+
     @Override
     public void exitSparents(SectionParser.SparentsContext ctx) {
         formals.clear();
-        //for (TerminalNode t : ctx.NAME()) {
-        //    formals.add(t.getText());
-        //}
+        for (SectionParser.SnameContext sctx : ctx.sname()) {
+            formals.add(sctx.getText());
+        }
     }
 
-    private Paragraph getSectionHeader(SectionParser.SectionHeaderContext ctx) {
+    @Override
+    public void exitEveryRule(ParserRuleContext ctx) {
+        super.exitEveryRule(ctx);
+    }
+
+    @Override
+    public void exitDefine(SectionParser.DefineContext ctx) {
+        Definition definition  = new Definition(fileName, currentTag);
+        definition.setKey(ctx.DEFSYM().getText());
+        definition.setValue(ctx.defstring().getText());
+        paragraphs.add(definition);
+    }
+
+    @Override
+    public void exitStandardParagraph(SectionParser.StandardParagraphContext ctx) {
+        StringBuilder sb = new StringBuilder();
+        Token start = ctx.start;
+        Token stop = ctx.stop;
+        for (int i = start.getTokenIndex(); i <= stop.getTokenIndex(); i++) {
+            CommonToken t = (CommonToken) tokens.get(i);
+            //if (t.getChannel() != Token.HIDDEN_CHANNEL)
+                sb.append(t.getText());
+        }
+        Formal f  = new Formal(sb.toString(), fileName, currentTag);
+        paragraphs.add(f);
+    }
+
+    @Override
+    public void exitSectionHeader(SectionParser.SectionHeaderContext ctx) {
         StringBuilder sb = new StringBuilder();
         sb.append("zed ");
         for (ParseTree c : ctx.children) {
@@ -75,25 +104,6 @@ public class SectionListenerImpl extends SectionBaseListener {
         SectionHeader s = new SectionHeader(sb.toString(), fileName, currentTag);
         s.setSectionName(ctx.sname().getText());
         s.getParents().addAll(formals);
-        return s;
-    }
-
-
-    @Override
-    public void exitStandardParagraph(SectionParser.StandardParagraphContext ctx) {
-        StringBuilder sb = new StringBuilder();
-        Token start = ctx.start;
-        Token stop = ctx.stop;
-        for (int i = start.getTokenIndex(); i <= stop.getTokenIndex(); i++) {
-            sb.append(tokens.get(i).getText());
-        }
-        Paragraph p = new Formal(sb.toString(), generic, fileName, currentTag);
-        paragraphs.add(p);
-    }
-
-    @Override
-    public void exitSectionHeader(SectionParser.SectionHeaderContext ctx) {
-        Paragraph p  = getSectionHeader(ctx);
-        paragraphs.add(p);
+        paragraphs.add(s);
     }
 }

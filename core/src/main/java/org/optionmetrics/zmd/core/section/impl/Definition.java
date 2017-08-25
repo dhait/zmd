@@ -28,6 +28,6 @@ public class Definition extends Paragraph {
 
     @Override
     public String toString() {
-        return key + " = " + value;
+        return "Definition(" + key + " = " + value + ")";
     }
 }
