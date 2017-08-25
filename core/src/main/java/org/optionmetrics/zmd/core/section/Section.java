@@ -111,17 +111,4 @@ public class Section {
         return getName();
 
     }
-
-    public void convertToZed() {
-        for (Paragraph p : paragraphs) {
-            if (p instanceof Formal) {
-                Formal f = (Formal) p;
-                f.convertToZed();
-            }
-            else if (p instanceof SectionHeader) {
-                SectionHeader h = (SectionHeader) p;
-                h.convertToZed();
-            }
-        }
-    }
 }

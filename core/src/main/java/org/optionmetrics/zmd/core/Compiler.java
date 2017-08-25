@@ -92,7 +92,7 @@ public class Compiler {
                     blockMap.map(p.getTagId(), ((Formal)p).getExpanded());
                 }
                 else if (p instanceof SectionHeader) {
-                    blockMap.map(p.getTagId(), ((SectionHeader) p).getExpanded());
+                    //blockMap.map(p.getTagId(), ((SectionHeader) p).getExpanded());
                 }
             }
         }

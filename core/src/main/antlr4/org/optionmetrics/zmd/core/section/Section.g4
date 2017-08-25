@@ -5,14 +5,20 @@ specification
 	;
 
 paragraph
-    : DEFINE DEFSYM defstring END               #Define
-    | keyword (TEXT | DEFSYM | COMMA )*  END    #StandardParagraph
-    | SECTION sname (PARENTS sparents)? END     #SectionHeader
+    : DEFINE DEFSYM defstring END                       #Define
+    | ZED zexpr* END                                    #ZedParagraph
+    | AXIOM gen? zexpr* (WHERE zexpr*)? END             #AxiomParagraph
+    | SCHEMA sname gen? zexpr* (WHERE zexpr*)? END      #SchemaParagraph
+    | SECTION sname (PARENTS sparents)? END             #SectionHeader
     ;
 
-defstring : (UNICODE | TEXT);
+defstring : (UNICODE | NAME | TEXT | RELSYM | MISCSYM)*;
 
-sname : TEXT;
+zexpr : (TEXT | NAME | DEFSYM | COMMA | miscsym | relsyms ) ;
+
+sname : NAME;
+
+gen: (LBRACKET NAME (COMMA NAME)* RBRACKET) ;
 
 sparents : sname (COMMA sname)* ;
 
@@ -21,22 +27,53 @@ keyword : ZED
         | SCHEMA
         ;
 
+
+relsyms  : RELSYM+ ;
+miscsym : MISCSYM+ ;
+
+
+
+RELSYM : [:<=>]+;
+MISCSYM : [\-+*@|];
+LBRACKET : '[';
+RBRACKET : ']';
+
 COMMENT : '/*' .*? '*/' -> channel(HIDDEN);
 LINE_COMMENT : '//' ~[\r\n]* -> channel(HIDDEN);
 ZED : 'zed' ;
-AXIOM : 'axiom' ;
+WHERE : 'where';
 SECTION : 'section' ;
+PARENTS : 'parent' 's'? ;
+AXIOM : 'axiom' ;
 SCHEMA : 'schema' ;
 DEFINE : 'define' ;
-PARENTS : 'parent' 's'?;
 END : 'end' ;
+COMMA : ',';
 UNICODE : ('\\u' HEX HEX HEX HEX)+;
 DEFSYM : '\\' ~[ \t\r\n,]+ ;
-SEMI : ';';
-COMMA : ',';
 WS : [ \t\r\n] -> channel(HIDDEN);
-// everything else
-TEXT : ~[ \t\r\n,]+  ;
 
-fragment HEX : [0-9a-fA-F];
+NAME: WORD STROKE*;
 
+TEXT : .+?;
+
+fragment
+HEX : [a-zA-Z0-9];
+
+fragment
+STROKE : ['?!];
+
+fragment
+WORDPART : ALPHA ALPHANUM* ;
+
+fragment
+WORD : WORDPART ('_' WORDPART)* ;
+
+fragment
+ALPHA : [a-zA-Z];
+
+fragment
+DIGITS : [0-9];
+
+fragment
+ALPHANUM : ALPHA | DIGITS ;

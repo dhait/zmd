@@ -29,6 +29,7 @@
 package org.optionmetrics.zmd.core.section;
 
 import org.junit.Test;
+import org.optionmetrics.zmd.core.section.impl.Formal;
 
 public class SectionProcessorTests {
 
@@ -45,6 +46,9 @@ public class SectionProcessorTests {
         for (Section s : sectionProcessor.getSections()) {
             for (Paragraph p : s.getParagraphs()) {
                 System.out.println( p);
+                if (p instanceof Formal) {
+                    System.out.println(((Formal) p).getExpanded());
+                }
             }
         }
 

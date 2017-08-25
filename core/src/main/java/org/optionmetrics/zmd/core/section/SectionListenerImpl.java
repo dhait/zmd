@@ -28,15 +28,25 @@
 
 package org.optionmetrics.zmd.core.section;
 
-import org.antlr.v4.runtime.*;
+import org.antlr.v4.runtime.BufferedTokenStream;
+import org.antlr.v4.runtime.ParserRuleContext;
+import org.antlr.v4.runtime.TokenStreamRewriter;
 import org.antlr.v4.runtime.tree.ParseTree;
-import org.antlr.v4.runtime.tree.TerminalNode;
-import org.optionmetrics.zmd.core.section.impl.*;
+import org.optionmetrics.zmd.core.section.impl.Definition;
+import org.optionmetrics.zmd.core.section.impl.Formal;
+import org.optionmetrics.zmd.core.section.impl.SectionHeader;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class SectionListenerImpl extends SectionBaseListener {
+
+    private final String AX = "\u2577";
+    private final String SCH = "\u250c";
+    private final String GEN = "\u2550";
+    private final String ZED = "\u2500";
+    private final String END = "\u2514";
+    private final String VERT = "|";
 
     private final String fileName;
     private List<Paragraph> paragraphs = new ArrayList<>();
@@ -68,6 +78,10 @@ public class SectionListenerImpl extends SectionBaseListener {
     }
 
     @Override
+    public void exitRelsyms(SectionParser.RelsymsContext ctx) {
+    }
+
+    @Override
     public void exitEveryRule(ParserRuleContext ctx) {
         super.exitEveryRule(ctx);
     }
@@ -80,18 +94,67 @@ public class SectionListenerImpl extends SectionBaseListener {
         paragraphs.add(definition);
     }
 
-    @Override
-    public void exitStandardParagraph(SectionParser.StandardParagraphContext ctx) {
-        StringBuilder sb = new StringBuilder();
-        Token start = ctx.start;
-        Token stop = ctx.stop;
-        for (int i = start.getTokenIndex(); i <= stop.getTokenIndex(); i++) {
-            CommonToken t = (CommonToken) tokens.get(i);
-            //if (t.getChannel() != Token.HIDDEN_CHANNEL)
-                sb.append(t.getText());
+    private String convert(String s, boolean generic) {
+        switch(s) {
+            case "@":
+                return " " + "\u2981" + " ";
+            case "+":
+            case "-":
+            case "*":
+            case "|":
+                return " " + s + " ";
+            case ",":
+            case ";":
+                return s + " ";
+            case "zed":
+                return ZED;
+            case "axiom":
+                return generic?  AX+GEN : AX;
+            case "schema":
+                return generic? SCH+GEN : GEN;
+            case "where":
+                return VERT;
+            case "end":
+                return END;
+
         }
-        Formal f  = new Formal(sb.toString(), fileName, currentTag);
+        if (s.startsWith("\\")) {
+            return s;
+        }
+        return s;
+    }
+
+    @Override
+    public void exitSchemaParagraph(SectionParser.SchemaParagraphContext ctx) {
+        Formal f = exitStandardParagraph(ctx,ctx.gen() != null);
         paragraphs.add(f);
+    }
+
+    @Override
+    public void exitZedParagraph(SectionParser.ZedParagraphContext ctx) {
+        Formal f = exitStandardParagraph(ctx, false);
+        paragraphs.add(f);
+    }
+
+    @Override
+    public void exitAxiomParagraph(SectionParser.AxiomParagraphContext ctx) {
+        Formal f = exitStandardParagraph(ctx, ctx.gen() != null);
+        paragraphs.add(f);
+    }
+
+    public Formal exitStandardParagraph(ParserRuleContext ctx, boolean generic) {
+        StringBuilder sb = new StringBuilder();
+        for( ParseTree t : ctx.children) {
+            if (t instanceof SectionParser.RelsymsContext)
+                sb.append(" ").append(t.getText()).append(" ");
+            else if (t instanceof  SectionParser.SnameContext) {
+                sb.append(t.getText()).append(" ");
+            }
+            else {
+                sb.append(convert(t.getText(), generic));
+            }
+        }
+        return new Formal(sb.toString(), fileName, currentTag);
     }
 
     @Override
