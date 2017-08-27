@@ -1,4 +1,4 @@
-grammar Translate;
+grammar TranslateOld;
 
 specification
 	: paragraph* EOF

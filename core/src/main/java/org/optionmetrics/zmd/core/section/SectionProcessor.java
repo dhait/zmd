@@ -35,6 +35,8 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.optionmetrics.zmd.core.section.impl.Formal;
 import org.optionmetrics.zmd.core.section.impl.SectionHeader;
+import org.optionmetrics.zmd.core.section.SectionLexer;
+import org.optionmetrics.zmd.core.section.SectionParser;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -57,7 +59,7 @@ public class SectionProcessor {
     public void process(String name) throws Exception {
         // parse and order the sections
         sortSections(name);
-        expandDefinitions();
+        //expandDefinitions();
     }
 
     private List<Paragraph> load(InputStream fileStream, String fileName) throws IOException {
@@ -65,6 +67,7 @@ public class SectionProcessor {
         CharStream stream = CharStreams.fromStream(fileStream);
         SectionLexer lexer = new SectionLexer(stream);
         CommonTokenStream tokens = new CommonTokenStream(lexer);
+
         SectionParser parser = new SectionParser(tokens);
         parser.removeErrorListeners();
         SectionErrorListener errorListener = new SectionErrorListener(fileName);

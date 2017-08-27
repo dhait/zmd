@@ -32,6 +32,8 @@ import org.antlr.v4.runtime.BufferedTokenStream;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.TokenStreamRewriter;
 import org.antlr.v4.runtime.tree.ParseTree;
+import org.optionmetrics.zmd.core.section.SectionParserBaseListener;
+import org.optionmetrics.zmd.core.section.SectionParser;
 import org.optionmetrics.zmd.core.section.impl.Definition;
 import org.optionmetrics.zmd.core.section.impl.Formal;
 import org.optionmetrics.zmd.core.section.impl.SectionHeader;
@@ -39,7 +41,7 @@ import org.optionmetrics.zmd.core.section.impl.SectionHeader;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SectionListenerImpl extends SectionBaseListener {
+public class SectionListenerImpl extends SectionParserBaseListener {
 
     private final String AX = "\u2577";
     private final String SCH = "\u250c";
@@ -78,19 +80,10 @@ public class SectionListenerImpl extends SectionBaseListener {
     }
 
     @Override
-    public void exitRelsyms(SectionParser.RelsymsContext ctx) {
-    }
-
-    @Override
-    public void exitEveryRule(ParserRuleContext ctx) {
-        super.exitEveryRule(ctx);
-    }
-
-    @Override
     public void exitDefine(SectionParser.DefineContext ctx) {
         Definition definition  = new Definition(fileName, currentTag);
         definition.setKey(ctx.DEFSYM().getText());
-        definition.setValue(ctx.defstring().getText());
+        definition.setValue(ctx.zexpr(0).getText());
         paragraphs.add(definition);
     }
 
@@ -144,15 +137,16 @@ public class SectionListenerImpl extends SectionBaseListener {
 
     public Formal exitStandardParagraph(ParserRuleContext ctx, boolean generic) {
         StringBuilder sb = new StringBuilder();
+
         for( ParseTree t : ctx.children) {
-            if (t instanceof SectionParser.RelsymsContext)
-                sb.append(" ").append(t.getText()).append(" ");
-            else if (t instanceof  SectionParser.SnameContext) {
-                sb.append(t.getText()).append(" ");
-            }
-            else {
-                sb.append(convert(t.getText(), generic));
-            }
+            //if (t instanceof SectionParser.RelsymsContext)
+            //    sb.append(" ").append(t.getText()).append(" ");
+            //else if (t instanceof  SectionParser.SnameContext) {
+            //    sb.append(t.getText()).append(" ");
+            //}
+            //else {
+                sb.append(t.getText());
+            //}
         }
         return new Formal(sb.toString(), fileName, currentTag);
     }

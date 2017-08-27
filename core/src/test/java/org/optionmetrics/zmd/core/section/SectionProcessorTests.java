@@ -46,9 +46,7 @@ public class SectionProcessorTests {
         for (Section s : sectionProcessor.getSections()) {
             for (Paragraph p : s.getParagraphs()) {
                 System.out.println( p);
-                if (p instanceof Formal) {
-                    System.out.println(((Formal) p).getExpanded());
-                }
+                
             }
         }
 

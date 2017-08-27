@@ -53,13 +53,13 @@ public class TranslatorTests {
                 "end\n";
 
         CharStream stream = CharStreams.fromString(input);
-        TranslateLexer lexer = new TranslateLexer(stream);
-        CommonTokenStream tokens = new CommonTokenStream(lexer);
+        //TranslateLexer lexer = new TranslateLexer(stream);
+        //CommonTokenStream tokens = new CommonTokenStream(lexer);
         //for (Token t : lexer.getAllTokens()) {
         //    System.out.println(t);
         //}
 
-        TranslateParser parser = new TranslateParser(tokens);
-        ParserRuleContext tree = parser.specification();
+        //TranslateParser parser = new TranslateParser(tokens);
+        //ParserRuleContext tree = parser.specification();
     }
 }

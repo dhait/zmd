@@ -1,4 +1,4 @@
-grammar Section;
+grammar SectionOld;
 
 specification
 	: paragraph* EOF
