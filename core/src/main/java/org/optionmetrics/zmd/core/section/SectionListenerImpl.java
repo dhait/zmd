@@ -31,6 +31,7 @@ package org.optionmetrics.zmd.core.section;
 import org.antlr.v4.runtime.BufferedTokenStream;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.TokenStreamRewriter;
+import org.antlr.v4.runtime.misc.Interval;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.optionmetrics.zmd.core.section.SectionParserBaseListener;
 import org.optionmetrics.zmd.core.section.SectionParser;
@@ -137,26 +138,20 @@ public class SectionListenerImpl extends SectionParserBaseListener {
 
     public Formal exitStandardParagraph(ParserRuleContext ctx, boolean generic) {
         StringBuilder sb = new StringBuilder();
-
-        for( ParseTree t : ctx.children) {
-            //if (t instanceof SectionParser.RelsymsContext)
-            //    sb.append(" ").append(t.getText()).append(" ");
-            //else if (t instanceof  SectionParser.SnameContext) {
-            //    sb.append(t.getText()).append(" ");
-            //}
-            //else {
-                sb.append(t.getText());
-            //}
+        Interval interval = ctx.getSourceInterval();
+        for (int i = interval.a; i <= interval.b; i++) {
+            sb.append(tokens.get(i).getText());
         }
+
         return new Formal(sb.toString(), fileName, currentTag);
     }
 
     @Override
     public void exitSectionHeader(SectionParser.SectionHeaderContext ctx) {
         StringBuilder sb = new StringBuilder();
-        sb.append("zed ");
-        for (ParseTree c : ctx.children) {
-            sb.append(c.getText());
+        Interval interval = ctx.getSourceInterval();
+        for (int i = interval.a; i <= interval.b; i++) {
+            sb.append(tokens.get(i).getText());
         }
         SectionHeader s = new SectionHeader(sb.toString(), fileName, currentTag);
         s.setSectionName(ctx.sname().getText());

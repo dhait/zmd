@@ -42,11 +42,12 @@ public class SectionProcessorTests {
 
         SectionProcessor sectionProcessor = new SectionProcessor(searchPath);
 
+        // results are ordered text
         sectionProcessor.process("zpptest");
         for (Section s : sectionProcessor.getSections()) {
             for (Paragraph p : s.getParagraphs()) {
                 System.out.println( p);
-                
+
             }
         }
 

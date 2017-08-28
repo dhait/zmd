@@ -8,10 +8,12 @@ import java.util.List;
 public class SectionHeader extends Paragraph {
 
     private String sectionName;
+    private String text;
     private List<String> parents = new ArrayList<>();
 
     public SectionHeader(String text, String fileName, int tag) {
         super(fileName, tag);
+        this.text = text;
     }
 
     public String getSectionName() {
@@ -27,6 +29,6 @@ public class SectionHeader extends Paragraph {
 
     @Override
     public String toString() {
-        return "SectionHeader(" + sectionName + ")";
+        return text;
     }
 }

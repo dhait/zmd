@@ -17,7 +17,7 @@ public class Formal extends Paragraph {
 
     @Override
     public String toString() {
-        return "Formal(" + text + ")";
+        return text;
     }
 
     public String getExpanded() {
