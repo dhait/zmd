@@ -33,14 +33,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.commonmark.node.Node;
 import org.commonmark.parser.Parser;
 import org.commonmark.renderer.html.HtmlRenderer;
-import org.optionmetrics.zmd.core.render.NodeRenderer;
-import org.optionmetrics.zmd.core.render.PageBuilder;
-import org.optionmetrics.zmd.core.section.Paragraph;
-import org.optionmetrics.zmd.core.section.SearchPath;
-import org.optionmetrics.zmd.core.section.Section;
-import org.optionmetrics.zmd.core.section.SectionProcessor;
-import org.optionmetrics.zmd.core.section.impl.Formal;
-import org.optionmetrics.zmd.core.section.impl.SectionHeader;
+import org.optionmetrics.zmd.core.renderOld.NodeRenderer;
+import org.optionmetrics.zmd.core.renderOld.PageBuilder;
+import org.optionmetrics.zmd.core.converter.Paragraph;
+import org.optionmetrics.zmd.core.converter.SearchPath;
+import org.optionmetrics.zmd.core.converter.Section;
+import org.optionmetrics.zmd.core.converter.ZMarkupProcessor;
+import org.optionmetrics.zmd.core.converter.impl.Formal;
+import org.optionmetrics.zmd.core.converter.impl.SectionHeader;
 
 import java.io.*;
 import java.util.HashMap;
@@ -72,13 +72,13 @@ public class Compiler {
         document.accept(translateVisitor);
         bw.close();
 
-        // now we parse the file
+        // now we parser the file
         SearchPath searchPath = new SearchPath();
         searchPath.addItem(SearchPath.SourceType.RESOURCE_PATH, "/toolkit");
         searchPath.addItem(SearchPath.SourceType.RESOURCE_PATH, "");
         searchPath.addItem(SearchPath.SourceType.DIRECTORY, tmpFile.getParent());
 
-        SectionProcessor sectionProcessor = new SectionProcessor(searchPath);
+        ZMarkupProcessor sectionProcessor = new ZMarkupProcessor(searchPath);
         sectionProcessor.process(StringUtils.removeEnd(tmpFile.getName(), ".z"));
 
         // now the paragraphs have been translated

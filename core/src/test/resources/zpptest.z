@@ -20,7 +20,7 @@ where
 end
 
 schema Abc[X]
-  def : GHI;
+  def : GHI
   jkl : MNO
 where
    pqr \in STU

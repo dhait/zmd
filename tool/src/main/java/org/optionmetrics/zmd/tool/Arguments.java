@@ -78,7 +78,7 @@ public class Arguments {
                 System.out.println("Version: " + v);
             }
         } catch (ParseException e) {
-            System.err.println("Failed to parse comand line properties");
+            System.err.println("Failed to parser comand line properties");
             help();
         }
         remaining = commandLine.getArgs();
