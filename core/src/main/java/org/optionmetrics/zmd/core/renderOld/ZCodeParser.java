@@ -26,25 +26,30 @@
  *  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.optionmetrics.zmd.core;
+package org.optionmetrics.zmd.core.renderOld;
 
-import org.junit.Test;
+import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.CharStreams;
+import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.ParserRuleContext;
+import org.antlr.v4.runtime.tree.ParseTreeWalker;
+import org.optionmetrics.zmd.core.parser.ZLexer;
+import org.optionmetrics.zmd.core.parser.ZOperatorParser;
+import org.optionmetrics.zmd.core.renderOld.RenderVisitor;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
 
-public class CompilerTests {
+public class ZCodeParser {
 
-    @Test
-    public void basicTest() throws Exception {
-
-        Reader reader = new BufferedReader(new InputStreamReader(
-                this.getClass().getResourceAsStream("/" + "simpleText.md")));
-
-        Compiler compiler = new Compiler();
-        String result = compiler.process(reader);
-        System.out.println(result);
+    public String parse(String zcode) {
+        CharStream stream = CharStreams.fromString(zcode);
+        ZLexer lexer = new ZLexer(stream);
+        CommonTokenStream tokens = new CommonTokenStream(lexer);
+        ZOperatorParser parser = new ZOperatorParser(tokens);
+        ParserRuleContext tree = parser.specification();
+        // add file tag
+        ParseTreeWalker walker = new ParseTreeWalker();
+        RenderVisitor listener = new RenderVisitor();
+        walker.walk(listener, tree);
+        return listener.getHtml();
     }
 }

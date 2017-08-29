@@ -28,15 +28,9 @@
 
 package org.optionmetrics.zmd.core.renderer;
 
-import freemarker.template.TemplateException;
 import org.junit.Test;
 import org.optionmetrics.zmd.core.converter.SearchPath;
 import org.optionmetrics.zmd.core.converter.ZMarkupProcessor;
-import org.optionmetrics.zmd.core.renderOld.PageBuilder;
-
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 public class ZRendererTests {
 

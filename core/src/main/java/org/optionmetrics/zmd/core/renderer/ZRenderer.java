@@ -54,6 +54,6 @@ public class ZRenderer {
         ParserRuleContext tree = parser.specification();
         ParseTreeWalker walker = new ParseTreeWalker();
         walker.walk(listener, tree);
-        return "";
+        return listener.toString();
     }
 }

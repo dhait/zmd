@@ -1,7 +1,7 @@
 <h1 class="title">BirthdayBook</h1>
 
-This is the BirthdayBook specification, from 
-Spivey <cites><a href="#spivey1992">Spivey</a></cites>.
+This is the BirthdayBook specification, from <cites><a href="#spivey1992">Spivey</a></cites>.  We extend it slightly by 
+adding an extra operation, ***RemindOne***, that is non-deterministic.
 
 
 ```Z
@@ -19,8 +19,8 @@ the birthday book system.
 
 ```Z
 schema BirthdayBook 
-    known : power NAME 
-    birthday : NAME pfun DATE
+    known : \power NAME 
+    birthday : NAME \pfun DATE
  where
     known = dom birthday
 end
@@ -44,30 +44,45 @@ behaviour of the system.
 
 ```Z
 schema AddBirthday 
-    Delta BirthdayBook 
+    \Delta BirthdayBook 
     name? : NAME 
     date? : DATE
 where
-    name? notin known 
-    birthday′ = birthday cup { name? mapsto date? }
+    name? \notin known 
+    birthday′ = birthday \cup { name? \mapsto date? }
 end 
 
 schema FindBirthday 
-    Xi BirthdayBook 
+    \Xi BirthdayBook 
     name? : NAME 
     date! : DATE
 where
-    name? in known 
+    name? \in known 
     date! = birthday ( name? )
 end 
 
 schema Remind 
-	Xi BirthdayBook 
+	\Xi BirthdayBook 
     today? : DATE 
-    cards! : power NAME
+    cards! : \power NAME
  where
     cards! = { n : known | birthday ( n ) = today? }
  end
+```
+
+This **RemindOne** schema does not appear in Spivey, but is
+included to show how non-deterministic schemas can be animated.
+It reminds us of just one person who has a birthday on the given 
+day.
+```Z
+schema RemindOne
+  \Xi BirthdayBook
+  today? : DATE
+  card! : NAME
+where
+  card! \in known
+  birthday card! = today?
+end
 ```
 
 Now we strengthen the specification by adding error handling.
@@ -89,21 +104,21 @@ where
 end
 
 schema AlreadyKnown 
-    Xi BirthdayBook 
+    \Xi BirthdayBook 
     name? : NAME 
     result! : REPORT
 where
-    name? in known 
+    name? \in known 
     result! = already_known
 end 
 
 
 schema NotKnown 
-    Xi BirthdayBook 
+    \Xi BirthdayBook 
     name? : NAME 
     result! : REPORT
 where
-    name? notin known 
+    name? \notin known 
     result! = not_known
 end
 ```
@@ -113,15 +128,15 @@ by specifying how errors are handled.
 
 ```Z
 zed
-    RAddBirthday == ( AddBirthday land Success ) lor AlreadyKnown
+    RAddBirthday == ( AddBirthday \land Success ) \lor AlreadyKnown
 end
 
 zed
-    RFindBirthday == ( FindBirthday land Success ) lor NotKnown
+    RFindBirthday == ( FindBirthday \land Success ) \lor NotKnown
 end
 
 zed
-    RRemind == Remind land Success
+    RRemind == Remind \land Success
 end     
 ```
 

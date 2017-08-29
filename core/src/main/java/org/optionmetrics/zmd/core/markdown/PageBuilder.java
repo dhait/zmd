@@ -26,24 +26,35 @@
  *  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.optionmetrics.zmd.core;
+package org.optionmetrics.zmd.core.markdown;
 
-public class ZInfo {
+import freemarker.template.Configuration;
+import freemarker.template.Template;
+import freemarker.template.TemplateException;
 
-    private boolean zblock = false;
-    private String language;
+import java.io.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
 
-    public ZInfo(String info) {
-        String language = "";
-        if (info != null) {
-            String[] parts = info.split(" ");
-            if (parts.length > 0)
-                language = parts[0];
-        }
-        zblock = (language.toLowerCase().equals("z") || language.toLowerCase().equals("zed"));
+import static org.apache.commons.lang3.CharEncoding.UTF_8;
+
+public class PageBuilder {
+
+    private Configuration configuration = new Configuration(Configuration.getVersion());
+
+    public PageBuilder() {
+        configuration.setClassForTemplateLoading(this.getClass(), "/html/");
     }
+    public String build(Map<String,String> root) throws IOException, TemplateException {
 
-    public boolean isZ() {
-        return zblock;
+        Template temp = configuration.getTemplate("ztemplate.ftl");
+
+        StringWriter writer = new StringWriter();
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        temp.process(root, new OutputStreamWriter(stream));
+        String str = stream.toString(UTF_8);
+        return str;
+
     }
 }

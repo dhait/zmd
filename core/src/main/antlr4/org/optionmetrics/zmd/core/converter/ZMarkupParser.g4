@@ -11,9 +11,10 @@ paragraph
     | AXIOM gen? zexpr* (WHERE zexpr*)? END             #AxiomParagraph
     | SCHEMA sname gen? zexpr* (WHERE zexpr*)? END      #SchemaParagraph
     | SECTION sname (PARENTS sparents)? END             #SectionHeader
+    | TAG NUMBER                                        #Tag
     ;
 
-zexpr : (TEXT | NAME | DEFSYM | COMMA | UNICODE) ;
+zexpr : (TEXT | NAME | NUMBER | DEFSYM | COMMA | UNICODE | LBRACKET | RBRACKET ) ;
 
 sname : NAME;
 

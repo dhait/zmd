@@ -1,6 +1,6 @@
 section relation_toolkit parents set_toolkit end
 
-define \maps \u21a6 end
+define \mapsto \u21a6 end
 define \comp \u2a3e end
 define \circ \u2218 end
 define \dres \u25c1 end

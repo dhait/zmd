@@ -29,25 +29,51 @@
 package org.optionmetrics.zmd.core.renderer;
 
 import org.antlr.v4.runtime.BufferedTokenStream;
+import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.misc.Interval;
+import org.optionmetrics.zmd.core.converter.ZMarkupLexer;
 import org.optionmetrics.zmd.core.converter.ZMarkupParser;
 import org.optionmetrics.zmd.core.converter.ZMarkupParserBaseListener;
 
 public class ZRendererListenerImpl extends ZMarkupParserBaseListener {
 
     private BufferedTokenStream tokens;
+    private StringBuilder builder = new StringBuilder();
 
     public ZRendererListenerImpl(BufferedTokenStream tokens) {
         this.tokens = tokens;
     }
 
+
+    @Override
+    public String toString() {
+        return builder.toString();
+    }
+
     @Override
     public void exitSchemaParagraph(ZMarkupParser.SchemaParagraphContext ctx) {
-        StringBuilder sb = new StringBuilder();
-        Interval interval = ctx.getSourceInterval();
-        for (int i = interval.a; i <= interval.b; i++) {
-            sb.append(tokens.get(i).getText());
+        builder.append("<div class=\"z-schema\">\n");
+        builder.append("\t<div class=\"z-name\" >\n");
+        builder.append("\t").append(ctx.sname().NAME().getText()).append("\n");
+        builder.append("\t</div>\n");
+        builder.append("\t<div class=\"z-schema-decl\">\n");
+        int start = ctx.zexpr(0).start.getTokenIndex();
+        int stop = ctx.zexpr(ctx.zexpr().size()-1).stop.getTokenIndex();
+
+        for (int i = start; i <= stop; i++) {
+            Token t = tokens.get(i);
+            if (t.getType() == ZMarkupLexer.WHERE) {
+                builder.append("\t</div>\n");
+                builder.append("\t<div class=\"z-schema-pred\">\n");
+            }
+            else if (t.getText().equals("\n")) {
+                builder.append("<br/>");
+            }
+            else {
+                builder.append(t.getText());
+            }
         }
-        System.out.println(sb.toString());
+        builder.append("\t</div>\n");
+        builder.append("</div>\n");
     }
 }

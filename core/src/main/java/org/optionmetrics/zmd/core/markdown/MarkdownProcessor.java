@@ -26,15 +26,13 @@
  *  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.optionmetrics.zmd.core;
+package org.optionmetrics.zmd.core.markdown;
 
 import org.antlr.v4.runtime.misc.MultiMap;
 import org.apache.commons.lang3.StringUtils;
 import org.commonmark.node.Node;
 import org.commonmark.parser.Parser;
 import org.commonmark.renderer.html.HtmlRenderer;
-import org.optionmetrics.zmd.core.renderOld.NodeRenderer;
-import org.optionmetrics.zmd.core.renderOld.PageBuilder;
 import org.optionmetrics.zmd.core.converter.Paragraph;
 import org.optionmetrics.zmd.core.converter.SearchPath;
 import org.optionmetrics.zmd.core.converter.Section;
@@ -47,19 +45,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class Compiler {
-
-    private String result;
-
-    public String getResult() {
-        return result;
-    }
+public class MarkdownProcessor {
 
     public String process(Reader reader) throws Exception {
 
-
-        Parser parser = Parser.builder()
-                .build();
+        Parser parser = Parser.builder().build();
 
         Node document = parser.parseReader(reader);
 
@@ -68,35 +58,36 @@ public class Compiler {
 
         FileWriter writer = new FileWriter(tmpFile.toString(),true);
         BufferedWriter bw = new BufferedWriter(writer);
-        TranslateVisitor translateVisitor = new TranslateVisitor(bw);
-        document.accept(translateVisitor);
+        TagVisitor tagVisitor = new TagVisitor(bw);
+        document.accept(tagVisitor);
         bw.close();
 
-        // now we parser the file
+        // now we parse the file
         SearchPath searchPath = new SearchPath();
         searchPath.addItem(SearchPath.SourceType.RESOURCE_PATH, "/toolkit");
         searchPath.addItem(SearchPath.SourceType.RESOURCE_PATH, "");
         searchPath.addItem(SearchPath.SourceType.DIRECTORY, tmpFile.getParent());
 
-        ZMarkupProcessor sectionProcessor = new ZMarkupProcessor(searchPath);
-        sectionProcessor.process(StringUtils.removeEnd(tmpFile.getName(), ".z"));
+        ZMarkupProcessor zMarkupProcessor = new ZMarkupProcessor(searchPath, true);
+        String results = zMarkupProcessor.process(StringUtils.removeEnd(tmpFile.getName(), ".z"));
 
         // now the paragraphs have been translated
 
         // extract tagged paragraphs
         MultiMap<Integer, String> blockMap = new MultiMap<>();
-        for (Section s: sectionProcessor.getSections()) {
+        for (Section s: zMarkupProcessor.getSections()) {
             for (Paragraph p : s.getParagraphs()) {
                 if (p instanceof Formal) {
                     // also add rendering
-                    blockMap.map(p.getTagId(), ((Formal)p).getExpanded());
+                    blockMap.map(p.getTagId(), ((Formal)p).toString());
                 }
                 else if (p instanceof SectionHeader) {
-                    //blockMap.map(p.getTagId(), ((SectionHeader) p).getExpanded());
+                    blockMap.map(p.getTagId(), ((SectionHeader) p).toString());
                 }
             }
         }
 
+        // put code back into document
         ReplaceVisitor replaceVisitor = new ReplaceVisitor(blockMap);
         document.accept(replaceVisitor);
 
@@ -104,7 +95,7 @@ public class Compiler {
                 .nodeRendererFactory(context -> new NodeRenderer(context))
                 .build();
 
-        result = renderer.render(document);
+        String result = renderer.render(document);
         PageBuilder builder = new PageBuilder();
 
         Map<String, String> root = new HashMap<>();
@@ -121,5 +112,7 @@ public class Compiler {
 
         String page = builder.build(root);
         return page;
+
     }
+
 }

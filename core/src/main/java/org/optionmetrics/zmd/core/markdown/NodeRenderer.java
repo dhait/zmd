@@ -26,35 +26,55 @@
  *  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.optionmetrics.zmd.core.renderOld;
+package org.optionmetrics.zmd.core.markdown;
 
-import freemarker.template.Configuration;
-import freemarker.template.Template;
-import freemarker.template.TemplateException;
+import org.commonmark.node.FencedCodeBlock;
+import org.commonmark.node.Node;
+import org.commonmark.renderer.html.CoreHtmlNodeRenderer;
+import org.commonmark.renderer.html.HtmlNodeRendererContext;
+import org.commonmark.renderer.html.HtmlWriter;
+import org.optionmetrics.zmd.core.renderer.ZRenderer;
 
-import java.io.*;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.Set;
 
-import static org.apache.commons.lang3.CharEncoding.UTF_8;
+import static java.util.Collections.singleton;
 
-public class PageBuilder {
+public class NodeRenderer extends CoreHtmlNodeRenderer {
 
-    private Configuration configuration = new Configuration(Configuration.getVersion());
-
-    public PageBuilder() {
-        configuration.setClassForTemplateLoading(this.getClass(), "/html/");
+    public NodeRenderer(HtmlNodeRendererContext context) {
+        super(context);
     }
-    public String build(Map<String,String> root) throws IOException, TemplateException {
 
-        Template temp = configuration.getTemplate("ztemplate.ftl");
 
-        StringWriter writer = new StringWriter();
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        temp.process(root, new OutputStreamWriter(stream));
-        String str = stream.toString(UTF_8);
-        return str;
+    public ZRenderer zRenderer = new ZRenderer();
 
+    @Override
+    public Set<Class<? extends Node>> getNodeTypes() {
+        return singleton(FencedCodeBlock.class);
+    }
+
+    public void zrender(ZTreeNode znode) {
+        String code = znode.getCode();
+        if (code != null) {
+            String htmlText = zRenderer.render(code);;
+            HtmlWriter html = context.getWriter();
+            html.line();
+            html.raw(htmlText);
+            html.line();
+        }
+    }
+
+
+    @Override
+    public void render(Node node) {
+        FencedCodeBlock fencedCodeBlock = (FencedCodeBlock) node;
+        ZInfo info = new ZInfo(fencedCodeBlock.getInfo());
+        if (info.isZ()) {
+            ZTreeNode znode = (ZTreeNode) fencedCodeBlock.getFirstChild();
+            zrender(znode);
+        }
+        else {
+            super.render(node);
+        }
     }
 }

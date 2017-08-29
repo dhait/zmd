@@ -26,28 +26,29 @@
  *  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.optionmetrics.zmd.core.parser;
+package org.optionmetrics.zmd.core.markdown;
 
-import org.antlr.v4.runtime.CharStream;
-import org.antlr.v4.runtime.CharStreams;
-import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.ParserRuleContext;
-import org.antlr.v4.runtime.tree.ParseTreeWalker;
-import org.optionmetrics.zmd.core.renderOld.RenderVisitor;
+import org.commonmark.node.CustomNode;
 
+public class ZTreeNode extends CustomNode {
 
-public class ZCodeParser {
+    private int sequence = 0;
+    private String code;
 
-    public String parse(String zcode) {
-        CharStream stream = CharStreams.fromString(zcode);
-        ZLexer lexer = new ZLexer(stream);
-        CommonTokenStream tokens = new CommonTokenStream(lexer);
-        ZOperatorParser parser = new ZOperatorParser(tokens);
-        ParserRuleContext tree = parser.specification();
-        // add file tag
-        ParseTreeWalker walker = new ParseTreeWalker();
-        RenderVisitor listener = new RenderVisitor();
-        walker.walk(listener, tree);
-        return listener.getHtml();
+    public ZTreeNode(int seq) {
+        this.sequence = seq;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public int getSequence() {
+        return sequence;
     }
 }

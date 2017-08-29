@@ -26,37 +26,25 @@
  *  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.optionmetrics.zmd.core;
+package org.optionmetrics.zmd.core.markdown;
 
-import org.commonmark.node.AbstractVisitor;
-import org.commonmark.node.FencedCodeBlock;
+import org.junit.Test;
 
-
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.Writer;
+import java.io.InputStreamReader;
+import java.io.Reader;
 
-public class TranslateVisitor extends AbstractVisitor {
+public class MarkdownProcessorTests {
 
-    private Writer writer;
-    private int sequence = 0;
+    @Test
+    public void basicTest() throws Exception {
 
-    public TranslateVisitor(Writer writer) {
-        this.writer = writer;
+        Reader reader = new BufferedReader(new InputStreamReader(
+                this.getClass().getResourceAsStream("/" + "birthdayBook.md")));
+
+        MarkdownProcessor processor = new MarkdownProcessor();
+        String result = processor.process(reader);
+        System.out.println(result);
     }
-    @Override
-    public void visit(FencedCodeBlock codeBlock) {
-        ZInfo info = new ZInfo(codeBlock.getInfo());
-        if (info.isZ()) {
-
-            String zblock = codeBlock.getLiteral();
-            try {
-                writer.write("tag " + String.valueOf(sequence) + "\n");
-                writer.write(zblock);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            codeBlock.appendChild(new ZTreeNode(sequence++));
-        }
-    }
-
 }

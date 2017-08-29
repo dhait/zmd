@@ -26,29 +26,24 @@
  *  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.optionmetrics.zmd.core;
+package org.optionmetrics.zmd.core.markdown;
 
-import org.antlr.v4.runtime.ParserRuleContext;
-import org.commonmark.node.CustomNode;
+public class ZInfo {
 
-public class ZTreeNode extends CustomNode {
+    private boolean zblock = false;
+    private String language;
 
-    private int sequence = 0;
-    private String code;
-
-    public ZTreeNode(int seq) {
-        this.sequence = seq;
+    public ZInfo(String info) {
+        String language = "";
+        if (info != null) {
+            String[] parts = info.split(" ");
+            if (parts.length > 0)
+                language = parts[0];
+        }
+        zblock = (language.toLowerCase().equals("z") || language.toLowerCase().equals("zed"));
     }
 
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public int getSequence() {
-        return sequence;
+    public boolean isZ() {
+        return zblock;
     }
 }

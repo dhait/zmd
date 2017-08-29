@@ -31,6 +31,7 @@ package org.optionmetrics.zmd.core.parser;
 import org.junit.Test;
 import org.optionmetrics.zmd.core.converter.SearchPath;
 import org.optionmetrics.zmd.core.converter.ZMarkupProcessor;
+import org.optionmetrics.zmd.core.renderOld.ZCodeParser;
 
 public class ZCodeParserTests {
     @Test

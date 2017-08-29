@@ -26,58 +26,33 @@
  *  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.optionmetrics.zmd.core.renderOld;
+package org.optionmetrics.zmd.core.markdown;
 
+import org.antlr.v4.runtime.misc.MultiMap;
+import org.commonmark.node.AbstractVisitor;
 import org.commonmark.node.FencedCodeBlock;
-import org.commonmark.node.Node;
-import org.commonmark.renderer.html.CoreHtmlNodeRenderer;
-import org.commonmark.renderer.html.HtmlNodeRendererContext;
-import org.commonmark.renderer.html.HtmlWriter;
-import org.optionmetrics.zmd.core.ZInfo;
-import org.optionmetrics.zmd.core.ZTreeNode;
-import org.optionmetrics.zmd.core.parser.ZCodeParser;
 
-import java.util.Set;
+import java.util.List;
+import java.util.stream.Collectors;
 
-import static java.util.Collections.singleton;
+public class ReplaceVisitor extends AbstractVisitor {
 
-public class NodeRenderer extends CoreHtmlNodeRenderer {
+    private MultiMap<Integer,String> blockMap;
 
-    private ZCodeParser parser = new ZCodeParser();
-
-    public NodeRenderer(HtmlNodeRendererContext context) {
-        super(context);
+    public ReplaceVisitor(MultiMap<Integer, String> blockMap) {
+        this.blockMap = blockMap;
     }
-
-
     @Override
-    public Set<Class<? extends Node>> getNodeTypes() {
-        return singleton(FencedCodeBlock.class);
-    }
 
-    public void zrender(ZTreeNode znode) {
-        String code = znode.getCode();
-        if (code != null) {
-            String htmlText = parser.parse(code);
-
-            HtmlWriter html = context.getWriter();
-            html.line();
-            html.raw(htmlText);
-            html.line();
-        }
-    }
-
-
-    @Override
-    public void render(Node node) {
-        FencedCodeBlock fencedCodeBlock = (FencedCodeBlock) node;
-        ZInfo info = new ZInfo(fencedCodeBlock.getInfo());
+    public void visit(FencedCodeBlock codeBlock) {
+        ZInfo info = new ZInfo(codeBlock.getInfo());
         if (info.isZ()) {
-            ZTreeNode znode = (ZTreeNode) fencedCodeBlock.getFirstChild();
-            zrender(znode);
-        }
-        else {
-            super.render(node);
+            ZTreeNode znode = (ZTreeNode) codeBlock.getFirstChild();
+            int tag = znode.getSequence();
+            List<String> paragraphs =  blockMap.get(tag);
+            if (paragraphs != null)
+                znode.setCode(paragraphs.stream().collect(Collectors.joining("\n")));
         }
     }
+
 }

@@ -39,10 +39,10 @@ public class ZMarkupProcessorTests {
         searchPath.addItem(SearchPath.SourceType.RESOURCE_PATH, "/toolkit");
         searchPath.addItem(SearchPath.SourceType.RESOURCE_PATH, "");
 
-        ZMarkupProcessor sectionProcessor = new ZMarkupProcessor(searchPath);
+        ZMarkupProcessor zMarkupProcessor = new ZMarkupProcessor(searchPath);
 
         // results are ordered text
-        String ztext = sectionProcessor.process("zpptest");
+        String ztext = zMarkupProcessor.process("zpptest");
         System.out.println(ztext);
     }
 }

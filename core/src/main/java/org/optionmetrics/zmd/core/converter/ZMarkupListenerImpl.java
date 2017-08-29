@@ -148,4 +148,10 @@ public class ZMarkupListenerImpl extends ZMarkupParserBaseListener {
         s.getParents().addAll(formals);
         paragraphs.add(s);
     }
+
+    @Override
+    public void exitTag(ZMarkupParser.TagContext ctx) {
+        currentTag = Integer.valueOf(ctx.NUMBER().getText());
+        super.exitTag(ctx);
+    }
 }
