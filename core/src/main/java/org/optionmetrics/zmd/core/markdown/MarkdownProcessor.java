@@ -28,17 +28,13 @@
 
 package org.optionmetrics.zmd.core.markdown;
 
-import org.antlr.v4.runtime.misc.MultiMap;
 import org.apache.commons.lang3.StringUtils;
 import org.commonmark.node.Node;
 import org.commonmark.parser.Parser;
 import org.commonmark.renderer.html.HtmlRenderer;
-import org.optionmetrics.zmd.core.converter.Paragraph;
 import org.optionmetrics.zmd.core.converter.SearchPath;
-import org.optionmetrics.zmd.core.converter.Section;
 import org.optionmetrics.zmd.core.converter.ZMarkupProcessor;
-import org.optionmetrics.zmd.core.converter.impl.Formal;
-import org.optionmetrics.zmd.core.converter.impl.SectionHeader;
+import org.optionmetrics.zmd.core.parser.ZCodeParser;
 
 import java.io.*;
 import java.util.HashMap;
@@ -56,63 +52,59 @@ public class MarkdownProcessor {
         File tmpFile = File.createTempFile("zmd_", ".z");
         tmpFile.deleteOnExit();
 
+        // write the Z markup blocks to a temp file, with tags
+        // and update the tag in the document tree code blocks
         FileWriter writer = new FileWriter(tmpFile.toString(),true);
         BufferedWriter bw = new BufferedWriter(writer);
         TagVisitor tagVisitor = new TagVisitor(bw);
         document.accept(tagVisitor);
         bw.close();
 
-        // now we parse the file
+        Map<Integer, ZNode> nodeMap = tagVisitor.getTagMap();
+
+        // now we parse the Z markup file
         SearchPath searchPath = new SearchPath();
         searchPath.addItem(SearchPath.SourceType.RESOURCE_PATH, "/toolkit");
         searchPath.addItem(SearchPath.SourceType.RESOURCE_PATH, "");
         searchPath.addItem(SearchPath.SourceType.DIRECTORY, tmpFile.getParent());
 
-        ZMarkupProcessor zMarkupProcessor = new ZMarkupProcessor(searchPath, true);
-        String results = zMarkupProcessor.process(StringUtils.removeEnd(tmpFile.getName(), ".z"));
+        ZMarkupProcessor zMarkupProcessor = new ZMarkupProcessor(searchPath);
+        String result = zMarkupProcessor.process(StringUtils.removeEnd(tmpFile.getName(), ".z"));
 
-        // now the paragraphs have been translated
+        // save results if desired
+        /*
+        File saveFile = File.createTempFile("save_", ".z");
+        writer = new FileWriter(saveFile.toString(),true);
+        bw = new BufferedWriter(writer);
+        bw.write(results);
+        bw.close();
+        System.out.println(saveFile.getAbsolutePath());
+        */
 
-        // extract tagged paragraphs
-        MultiMap<Integer, String> blockMap = new MultiMap<>();
-        for (Section s: zMarkupProcessor.getSections()) {
-            for (Paragraph p : s.getParagraphs()) {
-                if (p instanceof Formal) {
-                    // also add rendering
-                    blockMap.map(p.getTagId(), ((Formal)p).toString());
-                }
-                else if (p instanceof SectionHeader) {
-                    blockMap.map(p.getTagId(), ((SectionHeader) p).toString());
-                }
-            }
-        }
-
-        // put code back into document
-        ReplaceVisitor replaceVisitor = new ReplaceVisitor(blockMap);
-        document.accept(replaceVisitor);
+        // now parse the raw Z
+        ZCodeParser zCodeParser = new ZCodeParser(nodeMap);
+        zCodeParser.parse(result);
+        // now each ZTreeNode has a list of ParserRuleContext for the paragraphs
+        // of that node
 
         HtmlRenderer renderer = HtmlRenderer.builder()
-                .nodeRendererFactory(context -> new NodeRenderer(context))
+                .nodeRendererFactory(context -> new ZNodeRenderer(context))
                 .build();
 
-        String result = renderer.render(document);
+        String rendering = renderer.render(document);
         PageBuilder builder = new PageBuilder();
 
         Map<String, String> root = new HashMap<>();
-
 
         InputStream cssFile = this.getClass().getResourceAsStream("/html/zstyle.css");
         BufferedReader cssReader = new BufferedReader(new InputStreamReader(cssFile));
         String css = cssReader.lines().collect(Collectors.joining());
 
-        root.put("body", result);
+        root.put("body", rendering);
         root.put("css", css);
-
-
 
         String page = builder.build(root);
         return page;
-
     }
 
 }

@@ -49,17 +49,15 @@ public class ZMarkupListenerImpl extends ZMarkupParserBaseListener {
     private final String VERT = "|";
 
     private final String fileName;
-    private boolean textOnly = false;
     private List<Paragraph> paragraphs = new ArrayList<>();
     private List<String> formals = new ArrayList<>();
     private int currentTag = -1;
     private BufferedTokenStream tokens;
     private TokenStreamRewriter rewriter;
 
-    public ZMarkupListenerImpl(BufferedTokenStream tokens, String fileName, boolean textOnly) {
+    public ZMarkupListenerImpl(BufferedTokenStream tokens, String fileName) {
         this.tokens = tokens;
         this.fileName = fileName;
-        this.textOnly = textOnly;
         rewriter = new TokenStreamRewriter(tokens);
     }
 
@@ -88,12 +86,9 @@ public class ZMarkupListenerImpl extends ZMarkupParserBaseListener {
     }
 
     public String convert(String s, boolean generic) {
-        if (s.equals("@"))
-            return "\u2981";
-        if (textOnly)
-            return s;
-
         switch(s) {
+            case "@":
+                return "\u2981";
             case "zed":
                 return ZED;
             case "axiom":

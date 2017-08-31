@@ -33,15 +33,23 @@ import org.commonmark.node.FencedCodeBlock;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.HashMap;
+import java.util.Map;
 
 public class TagVisitor extends AbstractVisitor {
 
     private Writer writer;
     private int sequence = 0;
+    private Map<Integer, ZNode> tagMap = new HashMap<>();
 
     public TagVisitor(Writer writer) {
         this.writer = writer;
     }
+
+    public Map<Integer, ZNode> getTagMap() {
+        return tagMap;
+    }
+
     @Override
     public void visit(FencedCodeBlock codeBlock) {
         ZInfo info = new ZInfo(codeBlock.getInfo());
@@ -54,7 +62,9 @@ public class TagVisitor extends AbstractVisitor {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            codeBlock.appendChild(new ZTreeNode(sequence++));
+            ZNode znode = new ZNode(sequence++);
+            tagMap.put(znode.getSequence(), znode);
+            codeBlock.appendChild(znode);
         }
     }
 }

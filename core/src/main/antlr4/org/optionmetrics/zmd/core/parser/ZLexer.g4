@@ -61,11 +61,20 @@ lexer grammar ZLexer;
 // http://standards.iso.org/ittf/PubliclyAvailableStandards/c021573_ISO_IEC_13568_2002(E).zip
 // https://www.iso.org/obp/ui/#iso:std:iso-iec:13568:ed-1:v1:cor:1:v1:en
 
+
 // 6.4.4.4 Box characters
 ZED: '\u2500' -> mode(Z); // In line 6, replace "| 0000 2028 LINE SEPARATOR" by "— 0000 2500 BOX DRAWINGS LIGHT HORIZONTAL".
 SCH: '\u250C' -> mode(Z); // ┌
 AX: '\u2577'  -> mode(Z); // ╷
-TEXT: ~[\u2500\u250C\u2577]+ -> channel(HIDDEN);
+ATTR: '@' -> mode(Attr);
+TEXT: ~[\u2500\u250C\u2577]+? -> channel(HIDDEN);
+
+mode Attr;
+TAG : 'Tag';
+AOPEN : '(';
+ACLOSE : ')';
+ADIGIT : [0-9]+;
+END_OF_ATTR: [\r\n] -> mode(DEFAULT_MODE);
 
 mode Z;
 
@@ -94,7 +103,7 @@ END: '\u2514' -> mode(DEFAULT_MODE); // In line 10, replace "(new line) 0000 202
 NLCHAR: '\u2028' -> type(NL); // In line 2, replace "0000 000A LINE FEED" by "0000 2028 LINE SEPARATOR".
 //SPACE: '\u0020'; // ' '
 
-WS:  [\p{Zs}]+ -> skip; // All Unicode characters with General Category Zs shall be treated as SPACE.
+WS:  [\t\p{Zs}]+ -> skip; // All Unicode characters with General Category Zs shall be treated as SPACE.
 NL: [\r\n]+ {shouldNL(_input.LA(1))}?;
 //NL:  [\r\n]+ -> channel(HIDDEN);
 IGNORE_NL: [\r\n]+  -> skip;

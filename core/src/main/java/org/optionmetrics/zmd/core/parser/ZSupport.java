@@ -26,55 +26,17 @@
  *  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.optionmetrics.zmd.core.markdown;
+package org.optionmetrics.zmd.core.parser;
 
-import org.commonmark.node.FencedCodeBlock;
-import org.commonmark.node.Node;
-import org.commonmark.renderer.html.CoreHtmlNodeRenderer;
-import org.commonmark.renderer.html.HtmlNodeRendererContext;
-import org.commonmark.renderer.html.HtmlWriter;
-import org.optionmetrics.zmd.core.renderer.ZRenderer;
+import org.antlr.v4.runtime.TokenStream;
 
+import java.util.HashSet;
 import java.util.Set;
 
-import static java.util.Collections.singleton;
+public class ZSupport {
+    static public Set<String> rightAssociativity = new HashSet<String>();
 
-public class NodeRenderer extends CoreHtmlNodeRenderer {
-
-    public NodeRenderer(HtmlNodeRendererContext context) {
-        super(context);
-    }
-
-
-    public ZRenderer zRenderer = new ZRenderer();
-
-    @Override
-    public Set<Class<? extends Node>> getNodeTypes() {
-        return singleton(FencedCodeBlock.class);
-    }
-
-    public void zrender(ZTreeNode znode) {
-        String code = znode.getCode();
-        if (code != null) {
-            String htmlText = zRenderer.render(code);;
-            HtmlWriter html = context.getWriter();
-            html.line();
-            html.raw(htmlText);
-            html.line();
-        }
-    }
-
-
-    @Override
-    public void render(Node node) {
-        FencedCodeBlock fencedCodeBlock = (FencedCodeBlock) node;
-        ZInfo info = new ZInfo(fencedCodeBlock.getInfo());
-        if (info.isZ()) {
-            ZTreeNode znode = (ZTreeNode) fencedCodeBlock.getFirstChild();
-            zrender(znode);
-        }
-        else {
-            super.render(node);
-        }
+    static boolean isLeftAssociative(TokenStream tokens) {
+        return !rightAssociativity.contains(tokens.get(tokens.index()).getText());
     }
 }

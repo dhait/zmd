@@ -26,28 +26,32 @@
  *  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.optionmetrics.zmd.core.renderer;
+package org.optionmetrics.zmd.core.parser;
 
-import org.junit.Test;
-import org.optionmetrics.zmd.core.converter.SearchPath;
-import org.optionmetrics.zmd.core.converter.ZMarkupProcessor;
+import org.antlr.v4.runtime.ParserRuleContext;
+import org.optionmetrics.zmd.core.markdown.ZNode;
 
-public class ZRendererTests {
+import java.util.Map;
 
-    @Test
-    public void basicTest() throws Exception {
+public class TaggingListener extends ZParserBaseListener {
 
-        ZRenderer renderer = new ZRenderer();
+    private final Map<Integer, ZNode> nodeMap;
+    private int currentTag = -1;
 
-        SearchPath searchPath = new SearchPath();
-        searchPath.addItem(SearchPath.SourceType.RESOURCE_PATH, "/toolkit");
-        searchPath.addItem(SearchPath.SourceType.RESOURCE_PATH, "");
-
-        ZMarkupProcessor sectionProcessor = new ZMarkupProcessor(searchPath, true);
-
-        // results are ordered text
-        String ztext = sectionProcessor.process("zpptest");
-        renderer.render(ztext);
-
+    public TaggingListener(Map<Integer, ZNode> nodeMap) {
+        this.nodeMap = nodeMap;
     }
+
+    @Override
+    public void exitEveryRule(ParserRuleContext ctx) {
+        if (ctx instanceof ZParser.ParagraphContext) {
+            ZNode node = nodeMap.get(currentTag);
+            if (node != null)
+                node.add(ctx);
+        }
+        else if (ctx instanceof ZParser.AttributeContext) {
+            currentTag = Integer.valueOf(((ZParser.AttributeContext) ctx).ADIGIT().getText());
+        }
+    }
+
 }

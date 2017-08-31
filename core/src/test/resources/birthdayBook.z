@@ -1,0 +1,87 @@
+─section prelude └
+─section set_toolkit └
+─section zmd_957415525357357967 └
+─section relation_toolkit parents set_toolkit └
+─section number_toolkit └
+─section function_toolkit parents relation_toolkit └
+─section sequence_toolkit parents function_toolkit, number_toolkit └
+─section standard_toolkit parents sequence_toolkit └
+─section birthday_book parents standard_toolkit └
+─
+    [ NAME, DATE ]
+└
+┌ BirthdayBook 
+    known : ℙ NAME 
+    birthday : NAME ⇸ DATE
+ |
+    known = dom birthday
+└
+┌ InitBirthdayBook 
+    BirthdayBook′ 
+|
+    known′ = { }
+└
+┌ AddBirthday 
+    Δ BirthdayBook 
+    name? : NAME 
+    date? : DATE
+|
+    name? ∉ known 
+    birthday′ = birthday ∪ { name? ↦ date? }
+└
+┌ FindBirthday 
+    Ξ BirthdayBook 
+    name? : NAME 
+    date! : DATE
+|
+    name? ∈ known 
+    date! = birthday ( name? )
+└
+┌ Remind
+	Ξ BirthdayBook 
+    today? : DATE 
+    cards! : ℙ NAME
+ |
+    cards! = { n : known | birthday ( n ) = today? }
+ └
+┌ RemindOne
+  Ξ BirthdayBook
+  today? : DATE
+  card! : NAME
+|
+  card! ∈ known
+  birthday card! = today?
+└
+─
+   REPORT ::= ok | already_known | not_known
+└
+┌ Success 
+    result! : REPORT
+|
+    result! = ok
+└
+┌ AlreadyKnown 
+    Ξ BirthdayBook 
+    name? : NAME 
+    result! : REPORT
+|
+    name? ∈ known 
+    result! = already_known
+└
+┌ NotKnown 
+    Ξ BirthdayBook 
+    name? : NAME 
+    result! : REPORT
+|
+    name? ∉ known 
+    result! = not_known
+└
+─
+    RAddBirthday == ( AddBirthday ∧ Success ) ∨ AlreadyKnown
+└
+─
+    RFindBirthday == ( FindBirthday ∧ Success ) ∨ NotKnown
+└
+─
+    RRemind == Remind ∧ Success
+└

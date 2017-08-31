@@ -47,7 +47,7 @@ public class ReplaceVisitor extends AbstractVisitor {
     public void visit(FencedCodeBlock codeBlock) {
         ZInfo info = new ZInfo(codeBlock.getInfo());
         if (info.isZ()) {
-            ZTreeNode znode = (ZTreeNode) codeBlock.getFirstChild();
+            ZNode znode = (ZNode) codeBlock.getFirstChild();
             int tag = znode.getSequence();
             List<String> paragraphs =  blockMap.get(tag);
             if (paragraphs != null)

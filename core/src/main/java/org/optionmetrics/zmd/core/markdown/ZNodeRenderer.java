@@ -26,19 +26,55 @@
  *  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.optionmetrics.zmd.core.converter.impl;
+package org.optionmetrics.zmd.core.markdown;
 
+import org.antlr.v4.runtime.ParserRuleContext;
+import org.commonmark.node.FencedCodeBlock;
+import org.commonmark.node.Node;
+import org.commonmark.renderer.html.CoreHtmlNodeRenderer;
+import org.commonmark.renderer.html.HtmlNodeRendererContext;
+import org.commonmark.renderer.html.HtmlWriter;
+import org.optionmetrics.zmd.core.renderer.ZRenderer;
 
-import org.optionmetrics.zmd.core.converter.Paragraph;
+import java.util.Set;
 
-public class Informal extends Paragraph {
-    private final String text;
-    public Informal(String text, String fileName, int tag) {
-        super(fileName, tag);
-        this.text = text;
+import static java.util.Collections.singleton;
+
+public class ZNodeRenderer extends CoreHtmlNodeRenderer {
+
+    public ZNodeRenderer(HtmlNodeRendererContext context) {
+        super(context);
     }
+
+
+    public ZRenderer zRenderer = new ZRenderer();
+
     @Override
-    public String toString() {
-        return "Informal(" + text + ")";
+    public Set<Class<? extends Node>> getNodeTypes() {
+        return singleton(FencedCodeBlock.class);
+    }
+
+    public void zrender(ZNode znode) {
+        HtmlWriter html = context.getWriter();
+        for (ParserRuleContext ctx : znode.getRoot()) {
+            String htmlText = zRenderer.render(ctx);
+            html.line();
+            html.raw(htmlText);
+            html.line();
+        }
+    }
+
+
+    @Override
+    public void render(Node node) {
+        FencedCodeBlock fencedCodeBlock = (FencedCodeBlock) node;
+        ZInfo info = new ZInfo(fencedCodeBlock.getInfo());
+        if (info.isZ()) {
+            ZNode znode = (ZNode) fencedCodeBlock.getFirstChild();
+            zrender(znode);
+        }
+        else {
+            super.render(node);
+        }
     }
 }

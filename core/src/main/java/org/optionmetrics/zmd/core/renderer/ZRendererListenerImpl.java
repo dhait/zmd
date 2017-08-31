@@ -30,20 +30,15 @@ package org.optionmetrics.zmd.core.renderer;
 
 import org.antlr.v4.runtime.BufferedTokenStream;
 import org.antlr.v4.runtime.Token;
-import org.antlr.v4.runtime.misc.Interval;
 import org.optionmetrics.zmd.core.converter.ZMarkupLexer;
 import org.optionmetrics.zmd.core.converter.ZMarkupParser;
 import org.optionmetrics.zmd.core.converter.ZMarkupParserBaseListener;
+import org.optionmetrics.zmd.core.parser.ZParser;
+import org.optionmetrics.zmd.core.parser.ZParserBaseListener;
 
-public class ZRendererListenerImpl extends ZMarkupParserBaseListener {
+public class ZRendererListenerImpl extends ZParserBaseListener {
 
-    private BufferedTokenStream tokens;
     private StringBuilder builder = new StringBuilder();
-
-    public ZRendererListenerImpl(BufferedTokenStream tokens) {
-        this.tokens = tokens;
-    }
-
 
     @Override
     public String toString() {
@@ -51,16 +46,21 @@ public class ZRendererListenerImpl extends ZMarkupParserBaseListener {
     }
 
     @Override
-    public void exitSchemaParagraph(ZMarkupParser.SchemaParagraphContext ctx) {
+    public void enterSchemaDefinitionParagraph(ZParser.SchemaDefinitionParagraphContext ctx) {
         builder.append("<div class=\"z-schema\">\n");
         builder.append("\t<div class=\"z-name\" >\n");
-        builder.append("\t").append(ctx.sname().NAME().getText()).append("\n");
+        builder.append("\t").append(ctx.NAME().getText()).append("\n");
         builder.append("\t</div>\n");
         builder.append("\t<div class=\"z-schema-decl\">\n");
-        int start = ctx.zexpr(0).start.getTokenIndex();
-        int stop = ctx.zexpr(ctx.zexpr().size()-1).stop.getTokenIndex();
+    }
 
-        for (int i = start; i <= stop; i++) {
+    @Override
+    public void exitSchemaDefinitionParagraph(ZParser.SchemaDefinitionParagraphContext ctx) {
+
+        //int start = ctx.schemaText().start.getTokenIndex();
+        //int stop = ctx.schemaText().stop.getTokenIndex();
+
+        /*for (int i = start; i <= stop; i++) {
             Token t = tokens.get(i);
             if (t.getType() == ZMarkupLexer.WHERE) {
                 builder.append("\t</div>\n");
@@ -73,6 +73,7 @@ public class ZRendererListenerImpl extends ZMarkupParserBaseListener {
                 builder.append(t.getText());
             }
         }
+        */
         builder.append("\t</div>\n");
         builder.append("</div>\n");
     }

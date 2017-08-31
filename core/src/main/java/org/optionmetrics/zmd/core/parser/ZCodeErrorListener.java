@@ -26,29 +26,26 @@
  *  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.optionmetrics.zmd.core.markdown;
+package org.optionmetrics.zmd.core.parser;
 
-import org.antlr.v4.runtime.ParserRuleContext;
-import org.commonmark.node.CustomNode;
+import org.antlr.v4.runtime.BaseErrorListener;
+import org.antlr.v4.runtime.CommonToken;
+import org.antlr.v4.runtime.RecognitionException;
+import org.antlr.v4.runtime.Recognizer;
 
-public class ZTreeNode extends CustomNode {
+public class ZCodeErrorListener extends BaseErrorListener {
 
-    private int sequence = 0;
-    private String code;
+    private int errorCount = 0;
 
-    public ZTreeNode(int seq) {
-        this.sequence = seq;
+    public int getErrorCount() {
+        return errorCount;
     }
 
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public int getSequence() {
-        return sequence;
+    @Override
+    public void syntaxError(Recognizer<?, ?> recognizer, Object offendingSymbol, int line, int charPositionInLine, String msg,
+                                        RecognitionException e) {
+        System.err.println("Error: line " + line + ": syntax error near '" +
+                ((CommonToken) offendingSymbol).getText() +"'" );
+        errorCount++;
     }
 }

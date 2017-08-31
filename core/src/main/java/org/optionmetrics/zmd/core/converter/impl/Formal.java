@@ -36,7 +36,6 @@ import java.util.Map;
 public class Formal extends Paragraph {
 
     private  String text;
-    private String expanded;
 
     public Formal(String text, String fileName, int tag) {
         super(fileName,tag);
@@ -45,11 +44,7 @@ public class Formal extends Paragraph {
 
     @Override
     public String toString() {
-        return text;
-    }
-
-    public String getExpanded() {
-        return expanded;
+        return "@Tag(" + getTagId() + ")\n" + text;
     }
 
     public void expand(Map<String, String> defines) {

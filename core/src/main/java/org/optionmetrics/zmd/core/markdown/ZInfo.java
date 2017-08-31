@@ -31,7 +31,6 @@ package org.optionmetrics.zmd.core.markdown;
 public class ZInfo {
 
     private boolean zblock = false;
-    private String language;
 
     public ZInfo(String info) {
         String language = "";

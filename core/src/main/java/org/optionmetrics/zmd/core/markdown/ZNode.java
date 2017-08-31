@@ -26,20 +26,41 @@
  *  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.optionmetrics.zmd.core.parser;
+package org.optionmetrics.zmd.core.markdown;
 
-import org.junit.Test;
+import org.antlr.v4.runtime.ParserRuleContext;
+import org.commonmark.node.CustomNode;
 
+import java.util.ArrayList;
+import java.util.List;
 
-import java.io.InputStream;
+public class ZNode extends CustomNode {
 
-public class ZCodeParserTests {
-    @Test
-    public void basicTest() throws Exception {
+    private int sequence = 0;
+    private String code;
+    private List<ParserRuleContext> root = new ArrayList<>();
 
-        InputStream input = this.getClass().getResourceAsStream("/" + "birthdayBook.z");
+    public ZNode(int seq) {
+        this.sequence = seq;
+    }
 
-        ZCodeParser zCodeParser = new ZCodeParser();
-        zCodeParser.parse(input);
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public int getSequence() {
+        return sequence;
+    }
+
+    public List<ParserRuleContext> getRoot() {
+        return root;
+    }
+
+    public void add(ParserRuleContext ctx) {
+        root.add(ctx);
     }
 }

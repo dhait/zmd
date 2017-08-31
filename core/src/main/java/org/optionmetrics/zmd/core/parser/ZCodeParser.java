@@ -26,30 +26,60 @@
  *  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.optionmetrics.zmd.core.renderOld;
+package org.optionmetrics.zmd.core.parser;
 
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
-import org.optionmetrics.zmd.core.parser.ZLexer;
-import org.optionmetrics.zmd.core.parser.ZOperatorParser;
-import org.optionmetrics.zmd.core.renderOld.RenderVisitor;
+import org.optionmetrics.zmd.core.markdown.ZNode;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ZCodeParser {
 
-    public String parse(String zcode) {
-        CharStream stream = CharStreams.fromString(zcode);
+    private final Map<Integer, ZNode> nodeMap;
+
+    // for testing
+    public ZCodeParser() {
+        this.nodeMap = new HashMap<>();
+    }
+    public ZCodeParser(Map<Integer, ZNode> nodeMap) {
+        this.nodeMap = nodeMap;
+    }
+    public void parse(InputStream input) throws IOException {
+        CharStream stream = CharStreams.fromStream(input);
+        parse(stream);
+    }
+
+    public void parse(String input) {
+        CharStream stream = CharStreams.fromString(input);
+        parse(stream);
+    }
+
+    private void parse(CharStream stream) {
         ZLexer lexer = new ZLexer(stream);
         CommonTokenStream tokens = new CommonTokenStream(lexer);
-        ZOperatorParser parser = new ZOperatorParser(tokens);
+        ZParser parser = new ZParser(tokens);
+
+        parser.removeErrorListeners();
+        ZCodeErrorListener errorListener = new ZCodeErrorListener();
+        parser.addErrorListener(errorListener);
+
         ParserRuleContext tree = parser.specification();
-        // add file tag
-        ParseTreeWalker walker = new ParseTreeWalker();
-        RenderVisitor listener = new RenderVisitor();
-        walker.walk(listener, tree);
-        return listener.getHtml();
+
+        TaggingListener listener = new TaggingListener(nodeMap);
+
+        if (errorListener.getErrorCount() > 0) {
+            System.err.println(errorListener.getErrorCount() + " errors in Z code ");
+        } else {
+            ParseTreeWalker walker = new ParseTreeWalker();
+            walker.walk(listener, tree);
+        }
+        //return listener.getParagraphs();
     }
 }

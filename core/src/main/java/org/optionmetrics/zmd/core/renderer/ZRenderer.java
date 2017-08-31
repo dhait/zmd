@@ -28,32 +28,16 @@
 
 package org.optionmetrics.zmd.core.renderer;
 
-import org.antlr.v4.runtime.CharStream;
-import org.antlr.v4.runtime.CharStreams;
-import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
-import org.optionmetrics.zmd.core.converter.ZMarkupErrorListener;
-import org.optionmetrics.zmd.core.converter.ZMarkupLexer;
-import org.optionmetrics.zmd.core.converter.ZMarkupParser;
 
 public class ZRenderer {
 
-    public String render(String ztext) {
 
-        CharStream stream = CharStreams.fromString(ztext);
-        ZMarkupLexer lexer = new ZMarkupLexer(stream);
-        CommonTokenStream tokens = new CommonTokenStream(lexer);
-
-        ZMarkupParser parser = new ZMarkupParser(tokens);
-        parser.removeErrorListeners();
-        ZMarkupErrorListener errorListener = new ZMarkupErrorListener("");
-        parser.addErrorListener(errorListener);
-
-        ZRendererListenerImpl listener = new ZRendererListenerImpl(tokens);
-        ParserRuleContext tree = parser.specification();
+    public String render(ParserRuleContext ctx) {
         ParseTreeWalker walker = new ParseTreeWalker();
-        walker.walk(listener, tree);
+        ZRendererListenerImpl listener = new ZRendererListenerImpl();
+        walker.walk(listener, ctx);
         return listener.toString();
     }
 }

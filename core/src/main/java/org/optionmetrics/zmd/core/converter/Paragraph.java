@@ -38,17 +38,10 @@ public abstract class Paragraph {
         this.tagId = tagId;
     }
 
-    public String getFileName() {
-        return fileName;
-    }
-
     public abstract String toString();
 
     public int getTagId() {
         return tagId;
     }
 
-    public void setTagId(int tagId) {
-        this.tagId = tagId;
-    }
 }
