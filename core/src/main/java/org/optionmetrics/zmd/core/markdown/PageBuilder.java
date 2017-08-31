@@ -50,11 +50,9 @@ public class PageBuilder {
 
         Template temp = configuration.getTemplate("ztemplate.ftl");
 
-        StringWriter writer = new StringWriter();
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         temp.process(root, new OutputStreamWriter(stream));
-        String str = stream.toString(UTF_8);
-        return str;
+        return stream.toString(UTF_8);
 
     }
 }

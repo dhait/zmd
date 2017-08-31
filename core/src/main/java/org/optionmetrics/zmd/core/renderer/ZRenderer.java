@@ -28,15 +28,21 @@
 
 package org.optionmetrics.zmd.core.renderer;
 
+import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 public class ZRenderer {
 
+    private final CommonTokenStream tokens;
+
+    public ZRenderer(CommonTokenStream tokens) {
+        this.tokens = tokens;
+    }
 
     public String render(ParserRuleContext ctx) {
         ParseTreeWalker walker = new ParseTreeWalker();
-        ZRendererListenerImpl listener = new ZRendererListenerImpl();
+        ZRendererListenerImpl listener = new ZRendererListenerImpl(tokens);
         walker.walk(listener, ctx);
         return listener.toString();
     }

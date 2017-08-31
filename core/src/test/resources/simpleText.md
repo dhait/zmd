@@ -9,10 +9,10 @@ Here is some code.
 
 
 ```Z eval=false
-schema Abc 
-   x : nat
+schema Abc
+   x : \nat
 where
-   x geq 3
+   x \geq 3
 end
 ```
 
@@ -27,7 +27,7 @@ And some more code:
 
 ```Z eval=false
 zed
-  WORD == 0 upto 255
+  WORD == 0 \upto 255
 end
 ```
 

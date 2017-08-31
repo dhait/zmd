@@ -28,6 +28,7 @@
 
 package org.optionmetrics.zmd.core.markdown;
 
+import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.commonmark.node.FencedCodeBlock;
 import org.commonmark.node.Node;
@@ -42,12 +43,12 @@ import static java.util.Collections.singleton;
 
 public class ZNodeRenderer extends CoreHtmlNodeRenderer {
 
-    public ZNodeRenderer(HtmlNodeRendererContext context) {
+    public ZRenderer zRenderer;
+
+    public ZNodeRenderer(HtmlNodeRendererContext context, CommonTokenStream tokens) {
         super(context);
+        zRenderer = new ZRenderer(tokens);
     }
-
-
-    public ZRenderer zRenderer = new ZRenderer();
 
     @Override
     public Set<Class<? extends Node>> getNodeTypes() {

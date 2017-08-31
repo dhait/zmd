@@ -44,14 +44,6 @@ public class ZNode extends CustomNode {
         this.sequence = seq;
     }
 
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
     public int getSequence() {
         return sequence;
     }

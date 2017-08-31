@@ -49,6 +49,11 @@ public class TaggingListener extends ZParserBaseListener {
             if (node != null)
                 node.add(ctx);
         }
+        else if (ctx instanceof ZParser.SectionContext) {
+            ZNode node = nodeMap.get(currentTag);
+            if (node != null)
+                node.add(ctx);
+        }
         else if (ctx instanceof ZParser.AttributeContext) {
             currentTag = Integer.valueOf(((ZParser.AttributeContext) ctx).ADIGIT().getText());
         }

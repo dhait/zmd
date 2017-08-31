@@ -43,6 +43,11 @@ import java.util.Map;
 public class ZCodeParser {
 
     private final Map<Integer, ZNode> nodeMap;
+    private CommonTokenStream tokens;
+
+    public CommonTokenStream getTokens() {
+        return tokens;
+    }
 
     // for testing
     public ZCodeParser() {
@@ -63,7 +68,7 @@ public class ZCodeParser {
 
     private void parse(CharStream stream) {
         ZLexer lexer = new ZLexer(stream);
-        CommonTokenStream tokens = new CommonTokenStream(lexer);
+        tokens = new CommonTokenStream(lexer);
         ZParser parser = new ZParser(tokens);
 
         parser.removeErrorListeners();

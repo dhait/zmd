@@ -73,7 +73,7 @@ mode Attr;
 TAG : 'Tag';
 AOPEN : '(';
 ACLOSE : ')';
-ADIGIT : [0-9]+;
+ADIGIT : '-'? [0-9]+;
 END_OF_ATTR: [\r\n] -> mode(DEFAULT_MODE);
 
 mode Z;

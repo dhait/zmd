@@ -46,7 +46,7 @@ public class Section {
         TEMP,
         PERM
     }
-    public Mark mark = Mark.NONE;
+    Mark mark = Mark.NONE;
 
     public String getName() {
         return getSectionHeader().getSectionName();
@@ -56,14 +56,14 @@ public class Section {
         return (SectionHeader) paragraphs.get(0);
     }
 
-    public Map<String, String> getDefinitions() {
+    Map<String, String> getDefinitions() {
             return definitions;
     }
     public List<String> getParents() {
         return (getSectionHeader()).getParents();
     }
 
-    public void visit(Set<Section> sections, List<Section> sorted) throws Exception {
+    void visit(Set<Section> sections, List<Section> sorted) throws Exception {
         if (mark == Mark.PERM)
             return;
         if (mark == Mark.TEMP) {
@@ -82,7 +82,7 @@ public class Section {
     }
 
 
-    public void collectDefinitions() {
+    void collectDefinitions() {
         for (Paragraph p : paragraphs) {
             if (p instanceof Definition) {
                 String key = ((Definition) p).getKey();
@@ -91,7 +91,7 @@ public class Section {
             }
         }
     }
-    public void expandDefinitions(Map<String, String> defines) {
+    void expandDefinitions(Map<String, String> defines) {
         for (Paragraph p : paragraphs) {
             if (p instanceof Formal) {
                 // make the substitutions
@@ -101,7 +101,7 @@ public class Section {
         }
     }
 
-    public List<Paragraph> getParagraphs() {
+    List<Paragraph> getParagraphs() {
         return paragraphs;
     }
 

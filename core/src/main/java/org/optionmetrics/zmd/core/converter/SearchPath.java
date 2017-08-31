@@ -51,14 +51,14 @@ public class SearchPath {
         }
     }
 
-    List<Source> sources = new ArrayList<>();
+    private List<Source> sources = new ArrayList<>();
 
 
     public void addItem(SourceType type, String path ) {
         sources.add(new Source(type, path));
     }
 
-    public InputStream find(String name) throws IOException {
+    InputStream find(String name) throws IOException {
         for (Source s : sources) {
             if (s.type == SourceType.RESOURCE_PATH) {
                 URL url = this.getClass().getResource(s.path + File.separatorChar + name);

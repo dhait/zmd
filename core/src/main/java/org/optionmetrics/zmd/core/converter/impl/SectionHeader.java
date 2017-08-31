@@ -57,6 +57,9 @@ public class SectionHeader extends Paragraph {
 
     @Override
     public String toString() {
-        return text;
+
+        //return ((getTagId() >= 0) ?  "@Tag(" + getTagId() + ")\n" : "")
+        //        + text;
+        return "@Tag(" + getTagId() + ")\n" + text;
     }
 }

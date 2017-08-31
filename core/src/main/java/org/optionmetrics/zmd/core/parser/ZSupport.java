@@ -34,7 +34,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class ZSupport {
-    static public Set<String> rightAssociativity = new HashSet<String>();
+    static public Set<String> rightAssociativity = new HashSet<>();
 
     static boolean isLeftAssociative(TokenStream tokens) {
         return !rightAssociativity.contains(tokens.get(tokens.index()).getText());

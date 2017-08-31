@@ -28,53 +28,145 @@
 
 package org.optionmetrics.zmd.core.renderer;
 
-import org.antlr.v4.runtime.BufferedTokenStream;
+import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
-import org.optionmetrics.zmd.core.converter.ZMarkupLexer;
-import org.optionmetrics.zmd.core.converter.ZMarkupParser;
-import org.optionmetrics.zmd.core.converter.ZMarkupParserBaseListener;
 import org.optionmetrics.zmd.core.parser.ZParser;
 import org.optionmetrics.zmd.core.parser.ZParserBaseListener;
 
 public class ZRendererListenerImpl extends ZParserBaseListener {
 
+    private final CommonTokenStream tokens;
     private StringBuilder builder = new StringBuilder();
 
+    public ZRendererListenerImpl(CommonTokenStream tokens) {
+        this.tokens = tokens;
+    }
     @Override
     public String toString() {
         return builder.toString();
     }
 
     @Override
-    public void enterSchemaDefinitionParagraph(ZParser.SchemaDefinitionParagraphContext ctx) {
-        builder.append("<div class=\"z-schema\">\n");
-        builder.append("\t<div class=\"z-name\" >\n");
-        builder.append("\t").append(ctx.NAME().getText()).append("\n");
-        builder.append("\t</div>\n");
-        builder.append("\t<div class=\"z-schema-decl\">\n");
+    public void exitGivenTypesParagraph(ZParser.GivenTypesParagraphContext ctx) {
+        exitZedRule(ctx);
+    }
+
+    @Override
+    public void exitHorizontalDefinitionParagraph(ZParser.HorizontalDefinitionParagraphContext ctx) {
+        exitZedRule(ctx);
+    }
+
+    @Override
+    public void exitGenericHorizontalDefinitionParagraph(ZParser.GenericHorizontalDefinitionParagraphContext ctx) {
+        exitZedRule(ctx);
+    }
+
+    @Override
+    public void exitGenericOperatorDefinitionParagraph(ZParser.GenericOperatorDefinitionParagraphContext ctx) {
+        exitZedRule(ctx);
+    }
+
+    @Override
+    public void exitFreeTypesParagraph(ZParser.FreeTypesParagraphContext ctx) {
+        exitZedRule(ctx);
+    }
+
+    @Override
+    public void exitConjectureParagraph(ZParser.ConjectureParagraphContext ctx) {
+        exitZedRule(ctx);
+    }
+
+    @Override
+    public void exitGenericConjectureParagraph(ZParser.GenericConjectureParagraphContext ctx) {
+        exitZedRule(ctx);
+    }
+
+    @Override
+    public void exitOperatorTemplateParagraph(ZParser.OperatorTemplateParagraphContext ctx) {
+        exitZedRule(ctx);
+    }
+
+    @Override
+    public void exitBaseSection(ZParser.BaseSectionContext ctx) {
+        exitZedRule(ctx);
+    }
+
+    @Override
+    public void exitInheritingSection(ZParser.InheritingSectionContext ctx) {
+        exitZedRule(ctx);
+    }
+
+    @Override
+    public void exitAxiomaticDescriptionParagraph(ZParser.AxiomaticDescriptionParagraphContext ctx) {
+        builder.append("<div class=\"z-axiom\">\n");
+        if (ctx.schemaText().declPart() != null) {
+            builder.append("<div class=\"z-axiom-decl\">\n");
+            int start = ctx.schemaText().declPart().start.getTokenIndex();
+            int stop = ctx.schemaText().declPart().stop.getTokenIndex();
+            appendTokens(start, stop);
+            builder.append("</div>");
+        }
+        if (ctx.schemaText().predicate() != null) {
+            builder.append("<div class=\"z-axiom-pred\">\n");
+            int start = ctx.schemaText().predicate().start.getTokenIndex();
+            int stop = ctx.schemaText().predicate().stop.getTokenIndex();
+            appendTokens(start, stop);
+            builder.append("</div>");
+        }
+        builder.append("</div>");
+    }
+
+    private void appendTokens(int start, int stop) {
+        for (int i = start; i <= stop; i++) {
+            Token t = tokens.get(i);
+            if (t.getText().equals("\n")) {
+                builder.append("<br/>");
+            } else {
+                // HACK: to make it look nicer
+                builder.append(t.getText()).append(" ");
+            }
+        }
+    }
+
+
+    public void exitZedRule(ParserRuleContext ctx) {
+        builder.append("<div class=\"z-text\">\n");
+        int start = ctx.start.getTokenIndex();
+        int stop = ctx.stop.getTokenIndex();
+        for (int i = start+1; i <= stop-1; i++) {
+            Token t = tokens.get(i);
+            if (t.getText().equals("\n")) {
+                builder.append("<br/>");
+            }
+            else if (t.getChannel() != Token.HIDDEN_CHANNEL){
+                // HACK: to make it look nicer
+                builder.append(t.getText()).append(" ");
+            }
+        }
+        builder.append("</div>");
     }
 
     @Override
     public void exitSchemaDefinitionParagraph(ZParser.SchemaDefinitionParagraphContext ctx) {
-
-        //int start = ctx.schemaText().start.getTokenIndex();
-        //int stop = ctx.schemaText().stop.getTokenIndex();
-
-        /*for (int i = start; i <= stop; i++) {
-            Token t = tokens.get(i);
-            if (t.getType() == ZMarkupLexer.WHERE) {
-                builder.append("\t</div>\n");
-                builder.append("\t<div class=\"z-schema-pred\">\n");
-            }
-            else if (t.getText().equals("\n")) {
-                builder.append("<br/>");
-            }
-            else {
-                builder.append(t.getText());
-            }
-        }
-        */
+        builder.append("<div class=\"z-schema\">\n");
+        builder.append("\t<div class=\"z-name\" >\n");
+        builder.append("\t").append(ctx.NAME().getText()).append("\n");
         builder.append("\t</div>\n");
+        if (ctx.schemaText().declPart() != null) {
+            builder.append("<div class=\"z-schema-decl\">\n");
+            int start = ctx.schemaText().declPart().start.getTokenIndex();
+            int stop = ctx.schemaText().declPart().stop.getTokenIndex();
+            appendTokens(start, stop);
+            builder.append("</div>");
+        }
+        if (ctx.schemaText().predicate() != null) {
+            builder.append("<div class=\"z-schema-pred\">\n");
+            int start = ctx.schemaText().predicate().start.getTokenIndex();
+            int stop = ctx.schemaText().predicate().stop.getTokenIndex();
+            appendTokens(start, stop);
+            builder.append("</div>");
+        }
         builder.append("</div>\n");
     }
 }

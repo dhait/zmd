@@ -38,6 +38,16 @@ import java.io.Reader;
 public class MarkdownProcessorTests {
 
     @Test
+    public void simpleTest() throws Exception {
+
+        Reader reader = new BufferedReader(new InputStreamReader(
+                this.getClass().getResourceAsStream("/" + "simpleText.md")));
+
+        MarkdownProcessor processor = new MarkdownProcessor();
+        String result = processor.process(reader);
+        System.out.println(result);
+    }
+    @Test
     public void basicTest() throws Exception {
 
         Reader reader = new BufferedReader(new InputStreamReader(

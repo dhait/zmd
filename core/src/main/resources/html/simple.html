@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Template for Z HTML</title>
+    <style>
+        div.z-text {    font-family: "Noto Sans", "Noto Sans CJK JP", sans-serif;    font-style: italic;    padding-left: 2em;    margin-top: 1em;    margin-bottom: 1em;    color: darkviolet;}div.z-axiom {    font-family: "Noto Sans", "Noto Sans CJK JP", sans-serif;    font-style: italic;    margin-left: 2em;    margin-right: 2em;    border-left: solid black 1px;}div.z-axiom .z-axiom-decl {    padding-left: 1em;    padding-top: 0.5em;    padding-bottom: 0.5em;    color: darkviolet;}div.z-axiom .z-axiom-pred {    border-top: solid green 1px;    padding-left: 1em;    padding-top: 0.5em;    padding-bottom: 0.5em;    width: 30em;    color: darkviolet;}div.z-schema {    font-family: "Noto Sans", "Noto Sans CJK JP", sans-serif;    font-style: italic;    margin-left: 2em;    margin-right: 2em;    margin-bottom: 2em;    margin-top: 2em;    border-left: solid black 1px;    border-top: solid black 1px;    border-bottom: solid black 1px;    width: 30em;    page-break-inside: avoid;}div.z-schema .z-schema-decl {    padding-left: 1em;    padding-top: 0.0em;    padding-bottom: 0.5em;    color: darkviolet;}div.z-schema .z-schema-pred {    border-top: solid black 1px;    padding-left: 1em;    padding-top: 0.5em;    padding-bottom: 0.5em;    width: 29em;    color: darkviolet;}div.z-schema .z-name {    display: inline-block;    background:#fff;    position: relative;    bottom: 0.6em;    left: 1em;    padding-left: 0.2em;    padding-right: 0.2em;    color: darkviolet;}
+    </style>
+</head>
+<body>
+<h1>Test of the markdown processor.</h1>
+<p>This is a test of the markdown processor.</p>
+<h2>Some code</h2>
+<p>Here is some code.</p>
+<div class="z-schema">
+    <div class="z-name" >
+        Abc
+    </div>
+    <div class="z-schema-decl">
+        x : ℕ </div><div class="z-schema-pred">
+    x ≥ 3 </div></div>
+<p>Now we will create a new section.  We need to explicitly
+    add the <em>standard_toolkit</em> as a parent:</p>
+<div class="z-text">
+    section mysection parents standard_toolkit </div>
+<p>And some more code:</p>
+<div class="z-text">
+    WORD == 0 .. 255 <br/></div>
+<div class="z-axiom">
+    <div class="z-axiom-decl">
+        mem_size : WORD </div><div class="z-axiom-pred">
+    mem_size = 100 </div></div>
+
+</body>
+</html>

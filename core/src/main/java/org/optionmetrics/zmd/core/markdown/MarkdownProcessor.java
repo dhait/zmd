@@ -88,7 +88,7 @@ public class MarkdownProcessor {
         // of that node
 
         HtmlRenderer renderer = HtmlRenderer.builder()
-                .nodeRendererFactory(context -> new ZNodeRenderer(context))
+                .nodeRendererFactory(context -> new ZNodeRenderer(context, zCodeParser.getTokens()))
                 .build();
 
         String rendering = renderer.render(document);
@@ -103,8 +103,7 @@ public class MarkdownProcessor {
         root.put("body", rendering);
         root.put("css", css);
 
-        String page = builder.build(root);
-        return page;
+        return builder.build(root);
     }
 
 }

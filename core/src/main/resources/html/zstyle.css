@@ -1,5 +1,6 @@
 div.z-text {
     font-family: "Noto Sans", "Noto Sans CJK JP", sans-serif;
+    font-style: italic;
     padding-left: 2em;
     margin-top: 1em;
     margin-bottom: 1em;
@@ -32,10 +33,7 @@ div.z-axiom .z-axiom-pred {
 div.z-schema {
     font-family: "Noto Sans", "Noto Sans CJK JP", sans-serif;
     font-style: italic;
-    margin-left: 2em;
-    margin-right: 2em;
-    margin-bottom: 2em;
-    margin-top: 2em;
+    margin: 2em;
     border-left: solid black 1px;
     border-top: solid black 1px;
     border-bottom: solid black 1px;

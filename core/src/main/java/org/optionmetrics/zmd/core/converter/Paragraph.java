@@ -30,17 +30,15 @@ package org.optionmetrics.zmd.core.converter;
 
 public abstract class Paragraph {
 
-    private final String fileName;
     private int tagId;
 
     public Paragraph(String fileName, int tagId) {
-        this.fileName = fileName;
         this.tagId = tagId;
     }
 
     public abstract String toString();
 
-    public int getTagId() {
+    protected int getTagId() {
         return tagId;
     }
 

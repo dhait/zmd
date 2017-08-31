@@ -1,42 +1,18 @@
 <!DOCTYPE html>
-<!--
-  ~ [The "BSD licence"]
-  ~  Copyright (c) 2017 David J Hait
-  ~  All rights reserved.
-  ~
-  ~  Redistribution and use in source and binary forms, with or without
-  ~  modification, are permitted provided that the following conditions
-  ~  are met:
-  ~  1. Redistributions of source code must retain the above copyright
-  ~     notice, this list of conditions and the following disclaimer.
-  ~  2. Redistributions in binary form must reproduce the above copyright
-  ~     notice, this list of conditions and the following disclaimer in the
-  ~     documentation and/or other materials provided with the distribution.
-  ~  3. The name of the author may not be used to endorse or promote products
-  ~     derived from this software without specific prior written permission.
-  ~
-  ~  THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
-  ~  IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
-  ~  OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
-  ~  IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
-  ~  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
-  ~  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-  ~  DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-  ~  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-  ~  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
-  ~  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-  -->
-
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Template for Z HTML</title>
-    <link rel="stylesheet" href="zstyle.css">
+    <style>
+        div.z-text {    font-family: "Noto Sans", "Noto Sans CJK JP", sans-serif;    font-style: italic;    padding-left: 2em;    margin-top: 1em;    margin-bottom: 1em;    color: darkviolet;}div.z-axiom {    font-family: "Noto Sans", "Noto Sans CJK JP", sans-serif;    font-style: italic;    margin-left: 2em;    margin-right: 2em;    border-left: solid black 1px;}div.z-axiom .z-axiom-decl {    padding-left: 1em;    padding-top: 0.5em;    padding-bottom: 0.5em;    color: darkviolet;}div.z-axiom .z-axiom-pred {    border-top: solid green 1px;    padding-left: 1em;    padding-top: 0.5em;    padding-bottom: 0.5em;    width: 30em;    color: darkviolet;}div.z-schema {    font-family: "Noto Sans", "Noto Sans CJK JP", sans-serif;    font-style: italic;    margin-left: 2em;    margin-right: 2em;    margin-bottom: 2em;    margin-top: 2em;    border-left: solid black 1px;    border-top: solid black 1px;    border-bottom: solid black 1px;    width: 30em;    page-break-inside: avoid;}div.z-schema .z-schema-decl {    padding-left: 1em;    padding-top: 0.0em;    padding-bottom: 0.5em;    color: darkviolet;}div.z-schema .z-schema-pred {    border-top: solid black 1px;    padding-left: 1em;    padding-top: 0.5em;    padding-bottom: 0.5em;    width: 29em;    color: darkviolet;}div.z-schema .z-name {    display: inline-block;    background:#fff;    position: relative;    bottom: 0.6em;    left: 1em;    padding-left: 0.2em;    padding-right: 0.2em;    color: darkviolet;}
+    </style>
 </head>
 <body>
 <h1 class="title">BirthdayBook</h1>
 <p>This is the BirthdayBook specification, from <cites><a href="#spivey1992">Spivey</a></cites>.  We extend it slightly by
     adding an extra operation, <strong><em>RemindOne</em></strong>, that is non-deterministic.</p>
+<div class="z-text">
+    [ NAME , DATE ] <br/></div>
 <p>The <strong>BirthdayBook</strong> schema defines the <em>state space</em> of
     the birthday book system.</p>
 <div class="z-schema">
@@ -44,10 +20,8 @@
         BirthdayBook
     </div>
     <div class="z-schema-decl">
-        known : ℙ NAME <br/>    birthday : NAME ⇸ DATE<br/> 	</div>
-    <div class="z-schema-pred">
-        <br/>    known = dom birthday	</div>
-</div>
+        known : ℙ NAME <br/>birthday : NAME ⇸ DATE </div><div class="z-schema-pred">
+    known = dom birthday </div></div>
 <p>This <strong>InitBirthdayBook</strong> specifies the initial state
     of the birthday book system.  It does not say explicitly that
     <em>birthday</em> is empty, but that is implicit, because its domain
@@ -57,10 +31,8 @@
         InitBirthdayBook
     </div>
     <div class="z-schema-decl">
-        BirthdayBook′ <br/>	</div>
-    <div class="z-schema-pred">
-        <br/>    known′ = { }	</div>
-</div>
+        BirthdayBook′ </div><div class="z-schema-pred">
+    known′ = { } </div></div>
 <p>Next we have several operation schemas to define the normal (non-error)
     behaviour of the system.</p>
 <div class="z-schema">
@@ -68,28 +40,22 @@
         AddBirthday
     </div>
     <div class="z-schema-decl">
-        Δ BirthdayBook <br/>    name? : NAME <br/>    date? : DATE<br/>	</div>
-    <div class="z-schema-pred">
-        <br/>    name? ∉ known <br/>    birthday′ = birthday ∪ { name? ↦ date? }	</div>
-</div>
+        Δ BirthdayBook <br/>name? : NAME <br/>date? : DATE </div><div class="z-schema-pred">
+    name? ∉ known <br/>birthday′ = birthday ∪ { name? ↦ date? } </div></div>
 <div class="z-schema">
     <div class="z-name" >
         FindBirthday
     </div>
     <div class="z-schema-decl">
-        Ξ BirthdayBook <br/>    name? : NAME <br/>    date! : DATE<br/>	</div>
-    <div class="z-schema-pred">
-        <br/>    name? ∈ known <br/>    date! = birthday ( name? )	</div>
-</div>
+        Ξ BirthdayBook <br/>name? : NAME <br/>date! : DATE </div><div class="z-schema-pred">
+    name? ∈ known <br/>date! = birthday ( name? ) </div></div>
 <div class="z-schema">
     <div class="z-name" >
         Remind
     </div>
     <div class="z-schema-decl">
-        Ξ BirthdayBook <br/>    today? : DATE <br/>    cards! : ℙ NAME<br/> 	</div>
-    <div class="z-schema-pred">
-        <br/>    cards! = { n : known | birthday ( n ) = today? }	</div>
-</div>
+        Ξ BirthdayBook <br/>today? : DATE <br/>cards! : ℙ NAME </div><div class="z-schema-pred">
+    cards! = { n : known | birthday ( n ) = today? } </div></div>
 <p>This <strong>RemindOne</strong> schema does not appear in Spivey, but is
     included to show how non-deterministic schemas can be animated.
     It reminds us of just one person who has a birthday on the given
@@ -99,11 +65,11 @@
         RemindOne
     </div>
     <div class="z-schema-decl">
-        Ξ BirthdayBook<br/>  today? : DATE<br/>  card! : NAME<br/>	</div>
-    <div class="z-schema-pred">
-        <br/>  card! ∈ known<br/>  birthday card! = today?	</div>
-</div>
+        Ξ BirthdayBook <br/>today? : DATE <br/>card! : NAME </div><div class="z-schema-pred">
+    card! ∈ known <br/>birthday card! = today? </div></div>
 <p>Now we strengthen the specification by adding error handling.</p>
+<div class="z-text">
+    REPORT ::= ok | already_known | not_known <br/></div>
 <p>First we define auxiliary schemas that capture various success
     and error cases.</p>
 <div class="z-schema">
@@ -111,30 +77,30 @@
         Success
     </div>
     <div class="z-schema-decl">
-        result! : REPORT<br/>	</div>
-    <div class="z-schema-pred">
-        <br/>    result! = ok	</div>
-</div>
+        result! : REPORT </div><div class="z-schema-pred">
+    result! = ok </div></div>
 <div class="z-schema">
     <div class="z-name" >
         AlreadyKnown
     </div>
     <div class="z-schema-decl">
-        Ξ BirthdayBook <br/>    name? : NAME <br/>    result! : REPORT<br/>	</div>
-    <div class="z-schema-pred">
-        <br/>    name? ∈ known <br/>    result! = already_known	</div>
-</div>
+        Ξ BirthdayBook <br/>name? : NAME <br/>result! : REPORT </div><div class="z-schema-pred">
+    name? ∈ known <br/>result! = already_known </div></div>
 <div class="z-schema">
     <div class="z-name" >
         NotKnown
     </div>
     <div class="z-schema-decl">
-        Ξ BirthdayBook <br/>    name? : NAME <br/>    result! : REPORT<br/>	</div>
-    <div class="z-schema-pred">
-        <br/>    name? ∉ known <br/>    result! = not_known	</div>
-</div>
+        Ξ BirthdayBook <br/>name? : NAME <br/>result! : REPORT </div><div class="z-schema-pred">
+    name? ∉ known <br/>result! = not_known </div></div>
 <p>Finally, we define robust versions of all the operations
     by specifying how errors are handled.</p>
+<div class="z-text">
+    RAddBirthday == ( AddBirthday ∧ Success ) ∨ AlreadyKnown <br/></div>
+<div class="z-text">
+    RFindBirthday == ( FindBirthday ∧ Success ) ∨ NotKnown <br/></div>
+<div class="z-text">
+    RRemind == Remind ∧ Success <br/></div>
 <h1>References</h1>
 <cite id="spivey1992">
     J. Michael Spivey.  The Z Notation: A Reference Manual.

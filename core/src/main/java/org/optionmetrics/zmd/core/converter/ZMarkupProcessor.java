@@ -88,7 +88,6 @@ public class ZMarkupProcessor {
 
         ZMarkupListenerImpl listener = new ZMarkupListenerImpl(tokens, fileName);
 
-        String s = listener.getRewriter().getText();
         if (errorListener.getErrorCount() > 0) {
             System.err.println(errorListener.getErrorCount() + " errors in file " + fileName);
         } else {
@@ -138,7 +137,7 @@ public class ZMarkupProcessor {
                 ps.add(0, h);
             }
         } else if (pref.stream().anyMatch(p->(p instanceof Formal))) { // there is at least one formal not in a converter
-            SectionHeader h = new SectionHeader(ZED +"section " + name + "parents standard_toolkit "+END,
+            SectionHeader h = new SectionHeader(ZED +"section " + name + " parents standard_toolkit "+END,
                     name + ".z", -1);
             h.setSectionName(name);
             h.getParents().add("standard_toolkit");
@@ -214,10 +213,10 @@ public class ZMarkupProcessor {
         }
         Optional<Section> prelude = sorted.stream().filter(s->s.getName().equals("prelude"))
                 .findFirst();
-        if (prelude.isPresent()) {
-            sorted.remove(prelude.get());
-            sorted.add(0, prelude.get());
-        }
+        prelude.ifPresent(section -> {
+            sorted.remove(section);
+            sorted.add(0, section);
+        });
         return sorted;
     }
 
