@@ -5,8 +5,10 @@
     <parent>
         <artifactId>zmd</artifactId>
         <groupId>org.optionmetrics.zmd</groupId>
-        <version>1.0</version>
+        <version>0.0.1</version>
     </parent>
+
+
     <modelVersion>4.0.0</modelVersion>
     <artifactId>zmd-cli</artifactId>
     <name>zmd command line tool</name>
@@ -15,7 +17,7 @@
         <dependency>
             <groupId>org.optionmetrics.zmd</groupId>
             <artifactId>zmd-core</artifactId>
-            <version>1.0</version>
+            <version>${zmd.version}</version>
         </dependency>
         <dependency>
             <groupId>commons-cli</groupId>

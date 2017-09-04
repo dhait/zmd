@@ -7,10 +7,19 @@
     <groupId>org.optionmetrics.zmd</groupId>
     <artifactId>zmd</artifactId>
     <packaging>pom</packaging>
-    <version>1.0</version>
+    <version>0.0.1</version>
 
     <name>zmd</name>
     <description>Z Specification Markdown Processor</description>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <zmd.version>${project.version}</zmd.version>
+    </properties>
+
     <inceptionYear>2017</inceptionYear>
     <organization>
         <name>OptionMetrics, LLC</name>
@@ -36,12 +45,6 @@
         <module>core</module>
     </modules>
 
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
-    </properties>
 
     <build>
         <pluginManagement>
@@ -59,7 +62,12 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
                 </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>versions-maven-plugin</artifactId>
+                </plugin>
             </plugins>
+
         </pluginManagement>
     </build>
 

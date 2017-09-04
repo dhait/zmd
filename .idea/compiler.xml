@@ -8,6 +8,7 @@
         <outputRelativeToContentRoot value="true" />
         <module name="core" />
         <module name="zmd-cli" />
+        <module name="zmd-core" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
@@ -19,6 +20,7 @@
       <module name="tool_test" target="1.8" />
       <module name="zmd" target="1.8" />
       <module name="zmd-cli" target="1.8" />
+      <module name="zmd-core" target="1.8" />
       <module name="zmd-tool" target="1.8" />
       <module name="zmd_main" target="1.8" />
       <module name="zmd_test" target="1.8" />

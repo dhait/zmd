@@ -6,7 +6,7 @@
     <parent>
         <artifactId>zmd</artifactId>
         <groupId>org.optionmetrics.zmd</groupId>
-        <version>1.0</version>
+        <version>0.0.1</version>
     </parent>
 
     <artifactId>zmd-core</artifactId>
