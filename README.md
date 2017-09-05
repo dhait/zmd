@@ -21,4 +21,4 @@ Build status
 
 ## License
 This project is licensed under the
-[3-Clause BSD License](https://opensource.org/licenses/BSD-3-Clause) -- see the [LICENSE.md] file for details.
+[3-Clause BSD License](https://opensource.org/licenses/BSD-3-Clause) -- see the [LICENSE.txt](LICENSE.txt) file for details.
