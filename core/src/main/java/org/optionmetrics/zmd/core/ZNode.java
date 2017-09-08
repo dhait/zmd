@@ -26,55 +26,19 @@
  *  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.optionmetrics.zmd.core.converter;
+package org.optionmetrics.zmd.core;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
+import org.commonmark.node.CustomNode;
 
-public class SearchPath {
+public class ZNode extends CustomNode {
 
-    public enum SourceType {
-        RESOURCE_PATH,
-        DIRECTORY
+    private int tag = 0;
+    private String code;
+
+    public ZNode(int tag) {
+        this.tag = tag;
     }
-
-    class Source {
-        SourceType type;
-        String path;
-        Source(SourceType type, String path) {
-            this.type = type;
-            this.path = path;
-        }
-    }
-
-    private List<Source> sources = new ArrayList<>();
-
-
-    public void addItem(SourceType type, String path ) {
-        sources.add(new Source(type, path));
-    }
-
-    InputStream find(String name) throws IOException {
-        for (Source s : sources) {
-            if (s.type == SourceType.RESOURCE_PATH) {
-                URL url = this.getClass().getResource(s.path + File.separatorChar + name);
-                if (url != null) {
-                    return url.openStream();
-                }
-            }
-            else if (s.type == SourceType.DIRECTORY) {
-                File f = new File(s.path, name);
-                if (f.exists()) {
-                    URL url = f.toURI().toURL();
-                    return url.openStream();
-                }
-            }
-        }
-        // not found
-        return null;
+    public int getTag() {
+        return tag;
     }
 }

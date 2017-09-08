@@ -26,20 +26,45 @@
  *  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.optionmetrics.zmd.core.parser;
+package org.optionmetrics.zmd.core;
 
-import org.junit.Test;
+import org.commonmark.node.AbstractVisitor;
+import org.commonmark.node.FencedCodeBlock;
 
+import java.io.IOException;
+import java.io.Writer;
+import java.util.HashMap;
+import java.util.Map;
 
-import java.io.InputStream;
+public class TagVisitor extends AbstractVisitor {
 
-public class ZCodeParserTests {
-    @Test
-    public void basicTest() throws Exception {
+    private Writer writer;
+    private int sequence = 0;
+    private Map<Integer, ZNode> tagMap = new HashMap<>();
 
-        InputStream input = this.getClass().getResourceAsStream("/" + "birthdayBook.z");
+    public TagVisitor(Writer writer) {
+        this.writer = writer;
+    }
 
-        ZCodeParser zCodeParser = new ZCodeParser();
-        zCodeParser.parse(input);
+    public Map<Integer, ZNode> getTagMap() {
+        return tagMap;
+    }
+
+    @Override
+    public void visit(FencedCodeBlock codeBlock) {
+        ZInfo info = new ZInfo(codeBlock.getInfo());
+        if (info.isZ()) {
+
+            String zblock = codeBlock.getLiteral();
+            try {
+                writer.write("tag " + String.valueOf(sequence) + " end\n");
+                writer.write(zblock);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            ZNode znode = new ZNode(sequence++);
+            tagMap.put(znode.getTag(), znode);
+            codeBlock.appendChild(znode);
+        }
     }
 }

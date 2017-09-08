@@ -26,32 +26,53 @@
  *  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.optionmetrics.zmd.core.converter.impl;
+package org.optionmetrics.zmd.core;
 
+import org.commonmark.node.FencedCodeBlock;
+import org.commonmark.node.Node;
+import org.commonmark.renderer.html.CoreHtmlNodeRenderer;
+import org.commonmark.renderer.html.HtmlNodeRendererContext;
+import org.commonmark.renderer.html.HtmlWriter;
 
-import org.optionmetrics.zmd.core.converter.Paragraph;
 
 import java.util.Map;
+import java.util.Set;
 
-public class Formal extends Paragraph {
+import static java.util.Collections.singleton;
 
-    private  String text;
+public class ZNodeRenderer extends CoreHtmlNodeRenderer {
 
-    public Formal(String text, String fileName, int tag) {
-        super(fileName,tag);
-        this.text = text;
+    public Map<Integer, String> blockMap;
+
+    public ZNodeRenderer(HtmlNodeRendererContext context, Map<Integer, String> blockMap) {
+        super(context);
+        this.blockMap = blockMap;
     }
 
     @Override
-    public String toString() {
-        return "@Tag(" + getTagId() + ")\n" + text;
+    public Set<Class<? extends Node>> getNodeTypes() {
+        return singleton(FencedCodeBlock.class);
     }
 
-    public void expand(Map<String, String> defines) {
-        String temp = text;
-        for (String k : defines.keySet()) {
-            temp = temp.replace(k, defines.get(k));
+    @Override
+    public void render(Node node) {
+        FencedCodeBlock fencedCodeBlock = (FencedCodeBlock) node;
+        ZInfo info = new ZInfo(fencedCodeBlock.getInfo());
+        if (info.isZ()) {
+            ZNode znode = (ZNode) fencedCodeBlock.getFirstChild();
+            zrender(znode);
         }
-        text = temp;
+        else {
+            super.render(node);
+        }
     }
+    public void zrender(ZNode znode) {
+        int tag = znode.getTag();
+        HtmlWriter html = context.getWriter();
+        html.line();
+        String htmlText = blockMap.get(tag);
+        html.raw(htmlText);
+        html.line();
+    }
+
 }

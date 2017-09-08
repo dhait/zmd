@@ -26,24 +26,23 @@
  *  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.optionmetrics.zmd.core.renderer;
+package org.optionmetrics.zmd.core;
 
-import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.ParserRuleContext;
-import org.antlr.v4.runtime.tree.ParseTreeWalker;
+public class ZInfo {
 
-public class ZRenderer {
+    private boolean zblock = false;
 
-    private final CommonTokenStream tokens;
-
-    public ZRenderer(CommonTokenStream tokens) {
-        this.tokens = tokens;
+    public ZInfo(String info) {
+        String language = "";
+        if (info != null) {
+            String[] parts = info.split(" ");
+            if (parts.length > 0)
+                language = parts[0];
+        }
+        zblock = (language.toLowerCase().equals("z") || language.toLowerCase().equals("zed"));
     }
 
-    public String render(ParserRuleContext ctx) {
-        ParseTreeWalker walker = new ParseTreeWalker();
-        ZRendererListenerImpl listener = new ZRendererListenerImpl(tokens);
-        walker.walk(listener, ctx);
-        return listener.toString();
+    public boolean isZ() {
+        return zblock;
     }
 }

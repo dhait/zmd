@@ -26,26 +26,33 @@
  *  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.optionmetrics.zmd.core.parser;
+package org.optionmetrics.zmd.core;
 
-import org.antlr.v4.runtime.BaseErrorListener;
-import org.antlr.v4.runtime.CommonToken;
-import org.antlr.v4.runtime.RecognitionException;
-import org.antlr.v4.runtime.Recognizer;
+import freemarker.template.Configuration;
+import freemarker.template.Template;
+import freemarker.template.TemplateException;
 
-public class ZCodeErrorListener extends BaseErrorListener {
+import java.io.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
 
-    private int errorCount = 0;
+import static org.apache.commons.lang3.CharEncoding.UTF_8;
 
-    public int getErrorCount() {
-        return errorCount;
+public class PageBuilder {
+
+    private Configuration configuration = new Configuration(Configuration.getVersion());
+
+    public PageBuilder() {
+        configuration.setClassForTemplateLoading(this.getClass(), "/html/");
     }
+    public String build(Map<String,String> root) throws IOException, TemplateException {
 
-    @Override
-    public void syntaxError(Recognizer<?, ?> recognizer, Object offendingSymbol, int line, int charPositionInLine, String msg,
-                                        RecognitionException e) {
-        System.err.println("Error: line " + line + ": syntax error near '" +
-                ((CommonToken) offendingSymbol).getText() +"'" );
-        errorCount++;
+        Template temp = configuration.getTemplate("ztemplate.ftl");
+
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        temp.process(root, new OutputStreamWriter(stream));
+        return stream.toString(UTF_8);
+
     }
 }

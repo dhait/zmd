@@ -6,24 +6,13 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="core" />
         <module name="zmd-cli" />
         <module name="zmd-core" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="core" target="1.8" />
-      <module name="core_main" target="1.8" />
-      <module name="core_test" target="1.8" />
-      <module name="tool" target="1.8" />
-      <module name="tool_main" target="1.8" />
-      <module name="tool_test" target="1.8" />
-      <module name="zmd" target="1.8" />
       <module name="zmd-cli" target="1.8" />
       <module name="zmd-core" target="1.8" />
-      <module name="zmd-tool" target="1.8" />
-      <module name="zmd_main" target="1.8" />
-      <module name="zmd_test" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>

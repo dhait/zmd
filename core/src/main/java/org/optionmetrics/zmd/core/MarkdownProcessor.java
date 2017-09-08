@@ -26,15 +26,15 @@
  *  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.optionmetrics.zmd.core.markdown;
+package org.optionmetrics.zmd.core;
+
 
 import org.apache.commons.lang3.StringUtils;
 import org.commonmark.node.Node;
 import org.commonmark.parser.Parser;
 import org.commonmark.renderer.html.HtmlRenderer;
-import org.optionmetrics.zmd.core.converter.SearchPath;
-import org.optionmetrics.zmd.core.converter.ZMarkupProcessor;
-import org.optionmetrics.zmd.core.parser.ZCodeParser;
+import org.optionmetrics.ztext.SearchPath;
+import org.optionmetrics.ztext.TextParser;
 
 import java.io.*;
 import java.util.HashMap;
@@ -49,7 +49,7 @@ public class MarkdownProcessor {
 
         Node document = parser.parseReader(reader);
 
-        File tmpFile = File.createTempFile("zmd_", ".z");
+        File tmpFile = File.createTempFile("zmd_", ".ztx");
         tmpFile.deleteOnExit();
 
         // write the Z markup blocks to a temp file, with tags
@@ -63,32 +63,20 @@ public class MarkdownProcessor {
         Map<Integer, ZNode> nodeMap = tagVisitor.getTagMap();
 
         // now we parse the Z markup file
-        SearchPath searchPath = new SearchPath();
+
+        TextParser zparser = new TextParser();
+        SearchPath searchPath = zparser.getSearchPath();
         searchPath.addItem(SearchPath.SourceType.RESOURCE_PATH, "/toolkit");
         searchPath.addItem(SearchPath.SourceType.RESOURCE_PATH, "");
         searchPath.addItem(SearchPath.SourceType.DIRECTORY, tmpFile.getParent());
 
-        ZMarkupProcessor zMarkupProcessor = new ZMarkupProcessor(searchPath);
-        String result = zMarkupProcessor.process(StringUtils.removeEnd(tmpFile.getName(), ".z"));
+        org.optionmetrics.ztext.Node result = zparser.parse(StringUtils.removeEnd(tmpFile.getName(), ".ztx"));
+        org.optionmetrics.ztext.HtmlRenderer zrenderer = new org.optionmetrics.ztext.HtmlRenderer();
+        Map<Integer, String> zblockMap = zrenderer.render(result);
 
-        // save results if desired
-        /*
-        File saveFile = File.createTempFile("save_", ".z");
-        writer = new FileWriter(saveFile.toString(),true);
-        bw = new BufferedWriter(writer);
-        bw.write(results);
-        bw.close();
-        System.out.println(saveFile.getAbsolutePath());
-        */
-
-        // now parse the raw Z
-        ZCodeParser zCodeParser = new ZCodeParser(nodeMap);
-        zCodeParser.parse(result);
-        // now each ZTreeNode has a list of ParserRuleContext for the paragraphs
-        // of that node
 
         HtmlRenderer renderer = HtmlRenderer.builder()
-                .nodeRendererFactory(context -> new ZNodeRenderer(context, zCodeParser.getTokens()))
+                .nodeRendererFactory(context -> new ZNodeRenderer(context, zblockMap))
                 .build();
 
         String rendering = renderer.render(document);

@@ -26,33 +26,34 @@
  *  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.optionmetrics.zmd.core.markdown;
+package org.optionmetrics.zmd.core;
 
-import freemarker.template.Configuration;
-import freemarker.template.Template;
-import freemarker.template.TemplateException;
+import org.junit.Test;
 
-import java.io.*;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.stream.Collectors;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.Reader;
 
-import static org.apache.commons.lang3.CharEncoding.UTF_8;
+public class MarkdownProcessorTests {
 
-public class PageBuilder {
+    @Test
+    public void simpleTest() throws Exception {
 
-    private Configuration configuration = new Configuration(Configuration.getVersion());
+        Reader reader = new BufferedReader(new InputStreamReader(
+                this.getClass().getResourceAsStream("/" + "simpleText.md")));
 
-    public PageBuilder() {
-        configuration.setClassForTemplateLoading(this.getClass(), "/html/");
+        MarkdownProcessor processor = new MarkdownProcessor();
+        String result = processor.process(reader);
+        System.out.println(result);
     }
-    public String build(Map<String,String> root) throws IOException, TemplateException {
+    @Test
+    public void basicTest() throws Exception {
 
-        Template temp = configuration.getTemplate("ztemplate.ftl");
+        Reader reader = new BufferedReader(new InputStreamReader(
+                this.getClass().getResourceAsStream("/" + "birthdayBook.md")));
 
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        temp.process(root, new OutputStreamWriter(stream));
-        return stream.toString(UTF_8);
-
+        MarkdownProcessor processor = new MarkdownProcessor();
+        String result = processor.process(reader);
+        System.out.println(result);
     }
 }

@@ -28,7 +28,6 @@
 
 package org.optionmetrics.zmd.tool;
 
-import org.optionmetrics.zmd.core.markdown.MarkdownProcessor;
 
 import java.io.*;
 
@@ -45,8 +44,8 @@ public class Main {
 
         Reader reader = new BufferedReader(new InputStreamReader(inputStream));
 
-        MarkdownProcessor processor = new MarkdownProcessor();
-        String result = processor.process(reader);
-        System.out.println(result);
+        //MarkdownProcessor processor = new MarkdownProcessor();
+        //String result = processor.process(reader);
+        //System.out.println(result);
     }
 }
