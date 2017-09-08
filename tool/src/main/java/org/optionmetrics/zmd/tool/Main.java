@@ -29,23 +29,54 @@
 package org.optionmetrics.zmd.tool;
 
 
+import org.optionmetrics.zmd.core.MarkdownProcessor;
+
 import java.io.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class Main {
+
+    public static void writeZStyle(PrintStream outstream) {
+        InputStream cssFile = Main.class.getResourceAsStream("/zstyle.css");
+        BufferedReader cssReader = new BufferedReader(new InputStreamReader(cssFile));
+        String css = cssReader.lines().collect(Collectors.joining("\n"));
+        outstream.println(css);
+    }
 
     public static void main(String [] args) throws Exception {
 
         Arguments arguments = new Arguments(args);
         arguments.parse();
 
-        String[] files = arguments.getRemaining();
+        PrintStream outstream;
+        if (arguments.getOutputFile().length() > 0) {
+            outstream = new PrintStream(
+                    new FileOutputStream(arguments.getOutputFile()));
+        }
+        else {
+            outstream = System.out;
+        }
 
-        InputStream inputStream = new FileInputStream(files[0]);
+        if (arguments.isZstyle()) {
+            writeZStyle(outstream);
+            return;
+        }
 
-        Reader reader = new BufferedReader(new InputStreamReader(inputStream));
+        List<InputStream> streams = new ArrayList<>();
+        for (String fileName : arguments.getRemaining()) {
+            InputStream inputStream = new FileInputStream(fileName);
+            streams.add(inputStream);
+        }
 
-        //MarkdownProcessor processor = new MarkdownProcessor();
-        //String result = processor.process(reader);
-        //System.out.println(result);
+        Reader reader = new BufferedReader(
+                            new InputStreamReader(
+                                    new SequenceInputStream(Collections.enumeration(streams))));
+
+        MarkdownProcessor processor = new MarkdownProcessor();
+        String result = processor.process(reader);
+        outstream.println(result);
     }
 }

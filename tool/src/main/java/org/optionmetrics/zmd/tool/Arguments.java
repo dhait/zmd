@@ -33,38 +33,41 @@ import org.apache.commons.cli.*;
 public class Arguments {
 
     private final String[] args;
-    private Options options = new Options();
+    private final Options options = new Options();
     private String[] remaining;
     private CommandLine commandLine;
 
+    private String outputFile = "";
+    private boolean zstyle = false;
+
+    public String getOutputFile() {
+        return outputFile;
+    }
+
+    public boolean isZstyle() {
+        return zstyle;
+    }
 
     public String[] getRemaining() {
         return remaining;
     }
 
-    public CommandLine getCommandLine() {
-        return commandLine;
-    }
-
     public Arguments(String[] args) {
 
         this.args = args;
-        Option help = Option.builder("h")
-                .argName("help")
-                .desc("Show help")
-                .longOpt("help")
+
+        options.addOption("h", "help", false, "Show help");
+        options.addOption("v", "version", false, "Print current version");
+        options.addOption("z", "zstyle", false, "Create zstyle.css");
+
+        Option outputFile = Option.builder("o")
+                .argName("output")
+                .desc("Output file")
+                .hasArg()
+                .longOpt("output")
                 .build();
 
-
-        Option version = Option.builder("v")
-                .argName("version")
-                .desc("Print current version")
-                .longOpt("version")
-                .build();
-
-        options.addOption(help);
-        options.addOption(version);
-
+        options.addOption(outputFile);
     }
 
     public void parse() {
@@ -81,8 +84,11 @@ public class Arguments {
             System.err.println("Failed to parser comand line properties");
             help();
         }
-        remaining = commandLine.getArgs();
+        if (commandLine.hasOption("o"))
+            outputFile = commandLine.getOptionValue("o");
+        zstyle = commandLine.hasOption("z");
 
+        remaining = commandLine.getArgs();
     }
 
     private void help() {

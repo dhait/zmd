@@ -32,19 +32,19 @@ import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 
-import java.io.*;
-import java.util.HashMap;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static org.apache.commons.lang3.CharEncoding.UTF_8;
 
 public class PageBuilder {
 
-    private Configuration configuration = new Configuration(Configuration.getVersion());
+    private final Configuration configuration = new Configuration(Configuration.getVersion());
 
     public PageBuilder() {
-        configuration.setClassForTemplateLoading(this.getClass(), "/html/");
+        configuration.setClassForTemplateLoading(this.getClass(), "/");
     }
     public String build(Map<String,String> root) throws IOException, TemplateException {
 

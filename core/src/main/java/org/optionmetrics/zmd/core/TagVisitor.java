@@ -33,21 +33,15 @@ import org.commonmark.node.FencedCodeBlock;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.util.HashMap;
-import java.util.Map;
 
 public class TagVisitor extends AbstractVisitor {
 
-    private Writer writer;
+    private final Writer writer;
     private int sequence = 0;
-    private Map<Integer, ZNode> tagMap = new HashMap<>();
+
 
     public TagVisitor(Writer writer) {
         this.writer = writer;
-    }
-
-    public Map<Integer, ZNode> getTagMap() {
-        return tagMap;
     }
 
     @Override
@@ -63,7 +57,6 @@ public class TagVisitor extends AbstractVisitor {
                 e.printStackTrace();
             }
             ZNode znode = new ZNode(sequence++);
-            tagMap.put(znode.getTag(), znode);
             codeBlock.appendChild(znode);
         }
     }

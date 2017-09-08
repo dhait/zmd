@@ -42,7 +42,7 @@ import static java.util.Collections.singleton;
 
 public class ZNodeRenderer extends CoreHtmlNodeRenderer {
 
-    public Map<Integer, String> blockMap;
+    private final Map<Integer, String> blockMap;
 
     public ZNodeRenderer(HtmlNodeRendererContext context, Map<Integer, String> blockMap) {
         super(context);
@@ -66,7 +66,7 @@ public class ZNodeRenderer extends CoreHtmlNodeRenderer {
             super.render(node);
         }
     }
-    public void zrender(ZNode znode) {
+    private void zrender(ZNode znode) {
         int tag = znode.getTag();
         HtmlWriter html = context.getWriter();
         html.line();

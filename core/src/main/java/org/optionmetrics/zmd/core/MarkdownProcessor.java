@@ -60,8 +60,6 @@ public class MarkdownProcessor {
         document.accept(tagVisitor);
         bw.close();
 
-        Map<Integer, ZNode> nodeMap = tagVisitor.getTagMap();
-
         // now we parse the Z markup file
 
         TextParser zparser = new TextParser();
@@ -84,9 +82,7 @@ public class MarkdownProcessor {
 
         Map<String, String> root = new HashMap<>();
 
-        InputStream cssFile = this.getClass().getResourceAsStream("/html/zstyle.css");
-        BufferedReader cssReader = new BufferedReader(new InputStreamReader(cssFile));
-        String css = cssReader.lines().collect(Collectors.joining());
+        String css = "";
 
         root.put("body", rendering);
         root.put("css", css);

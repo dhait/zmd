@@ -33,7 +33,6 @@ import org.commonmark.node.CustomNode;
 public class ZNode extends CustomNode {
 
     private int tag = 0;
-    private String code;
 
     public ZNode(int tag) {
         this.tag = tag;
