@@ -1,4 +1,8 @@
-<h1 class="title">BirthdayBook</h1>
+---
+title: BirthdayBook
+author: David J Hait
+date: September 8, 2017
+...
 
 This is the BirthdayBook specification, from <cites><a href="#spivey1992">Spivey</a></cites>.  We extend it slightly by 
 adding an extra operation, ***RemindOne***, that is non-deterministic.

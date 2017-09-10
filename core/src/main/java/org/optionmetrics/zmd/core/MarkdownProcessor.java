@@ -30,6 +30,9 @@ package org.optionmetrics.zmd.core;
 
 
 import org.apache.commons.lang3.StringUtils;
+import org.commonmark.Extension;
+import org.commonmark.ext.front.matter.YamlFrontMatterExtension;
+import org.commonmark.ext.front.matter.YamlFrontMatterVisitor;
 import org.commonmark.node.Node;
 import org.commonmark.parser.Parser;
 import org.commonmark.renderer.html.HtmlRenderer;
@@ -37,7 +40,9 @@ import org.optionmetrics.ztext.SearchPath;
 import org.optionmetrics.ztext.TextParser;
 
 import java.io.*;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -45,7 +50,11 @@ public class MarkdownProcessor {
 
     public String process(Reader reader) throws Exception {
 
-        Parser parser = Parser.builder().build();
+        List<Extension> extensions = Arrays.asList(YamlFrontMatterExtension.create());
+
+        Parser parser = Parser.builder()
+                .extensions(extensions)
+                .build();
 
         Node document = parser.parseReader(reader);
 
@@ -75,9 +84,24 @@ public class MarkdownProcessor {
 
         HtmlRenderer renderer = HtmlRenderer.builder()
                 .nodeRendererFactory(context -> new ZNodeRenderer(context, zblockMap))
+                .extensions(extensions)
                 .build();
 
         String rendering = renderer.render(document);
+
+        // Get YAML data if any
+        YamlFrontMatterVisitor visitor = new YamlFrontMatterVisitor();
+        document.accept(visitor);
+        // now visitor has yaml data
+        // supported:
+        //  title
+        //  author
+        //  date
+        if (visitor.getData() != null) {
+            // there was a yaml section
+        }
+
+
         PageBuilder builder = new PageBuilder();
 
         Map<String, String> root = new HashMap<>();
