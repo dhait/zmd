@@ -147,6 +147,6 @@ end
 # References
 <cite id="spivey1992">
 J. Michael Spivey.  The Z Notation: A Reference Manual.
-   *International Series in Computer Science*, Prentice-Hall International
+   <i>International Series in Computer Science</i>, Prentice-Hall International
   (UK) Ltd, second edition, 1992.
 </cite>

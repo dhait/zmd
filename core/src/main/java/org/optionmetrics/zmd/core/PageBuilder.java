@@ -35,6 +35,7 @@ import freemarker.template.TemplateException;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.util.List;
 import java.util.Map;
 
 import static org.apache.commons.lang3.CharEncoding.UTF_8;
@@ -46,7 +47,7 @@ public class PageBuilder {
     public PageBuilder() {
         configuration.setClassForTemplateLoading(this.getClass(), "/");
     }
-    public String build(Map<String,String> root) throws IOException, TemplateException {
+    public String build(Map<String,Object> root) throws IOException, TemplateException {
 
         Template temp = configuration.getTemplate("ztemplate.ftl");
 

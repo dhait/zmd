@@ -40,10 +40,7 @@ import org.optionmetrics.ztext.SearchPath;
 import org.optionmetrics.ztext.TextParser;
 
 import java.io.*;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class MarkdownProcessor {
@@ -97,19 +94,17 @@ public class MarkdownProcessor {
         //  title
         //  author
         //  date
-        if (visitor.getData() != null) {
-            // there was a yaml section
+        Map<String, Object> root = new HashMap<>();
+        for (String k : visitor.getData().keySet()) {
+            root.put(k, visitor.getData().get(k));
         }
+        root.put("body", rendering);
+        root.put("zstyle", "zstyle.css");
+        if (!root.containsKey("pagetitle"))
+            root.put("pagetitle", "Rendered by ZMD");
 
 
         PageBuilder builder = new PageBuilder();
-
-        Map<String, String> root = new HashMap<>();
-
-        String css = "";
-
-        root.put("body", rendering);
-        root.put("css", css);
 
         return builder.build(root);
     }

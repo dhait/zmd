@@ -63,6 +63,11 @@ body {
 .author > :first-child {
     font-size: 14pt; }
 
+.date {
+    font-size: 12pt;
+    text-align: center;
+}
+
 h1,
 h2,
 h3,
